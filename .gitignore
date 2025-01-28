@@ -1,0 +1,4 @@
+mnist_data
+data
+__pycache__
+*.pyc
