@@ -1,5 +1,6 @@
 import torch.nn as nn
 from collections import OrderedDict
+import torch
 
 
 def cut_model_from_layer(
@@ -20,6 +21,9 @@ def cut_model_from_layer(
     Returns:
         torch.nn.Module: A new model starting from the specified layer.
     """
+    if isinstance(layer_name, nn.Module):
+        layer_name = get_layer_name(model, layer_name)
+
     # Get all layers as an ordered dictionary
     modules = dict(model.named_modules())
 
@@ -62,7 +66,7 @@ def cut_model_from_layer(
 
 def cut_model_to_layer(
     model: nn.Module,
-    layer_name: str,
+    layer_name: str | nn.Module,
     included: bool = False,
 ) -> nn.Module:
     """
@@ -76,6 +80,9 @@ def cut_model_to_layer(
     Returns:
         torch.nn.Module: A new model ending at the specified layer.
     """
+    if isinstance(layer_name, nn.Module):
+        layer_name = get_layer_name(model, layer_name)
+
     # Get all layers as an ordered dictionary
     modules = dict(model.named_modules())
 
@@ -107,7 +114,7 @@ def cut_model_to_layer(
     return nn.Sequential(layers)
 
 
-def set_relu_inplace(model, inplace=False):
+def set_relu_inplace(model: nn.Module, inplace=False):
     """
     Sets the inplace parameter of all ReLU layers to False.
     This is needed for the DeepExplainer rom the shap library to work correctly.
@@ -117,3 +124,51 @@ def set_relu_inplace(model, inplace=False):
             child.inplace = inplace
         else:
             set_relu_inplace(child)
+
+
+def scale_tensor(y: torch.Tensor, perc: float = 0.5, tolerance: float = 1e-5):
+    """
+    Scale the input tensor so that the area under the curve is perc of the total area.
+    y is assumed to be a 2D tensor whose values are in the range [0,1].
+
+    Args:
+        - y (torch.Tensor): 2D tensor whose values are in the range [0,1].
+        - perc (float, optional): Percentage of the total area. Defaults to 0.5.
+        - tolerance (float, optional): Tolerance on the result. Defaults to 1e-3.
+
+    Returns:
+        torch.Tensor: The scaled version of y.
+    """
+    # Scale y so that the area under the curve is perc of the total area
+    assert 0 <= perc <= 1, "perc must be in the range [0,1]"
+    assert 0 <= tolerance, "tolerance must be positive"
+    assert y.min() == 0 and y.max() == 1, "y must be in the range [0,1]"
+
+    H, W = y.shape
+    TOT = H * W
+
+    def integral(y):
+        return torch.trapz(torch.trapz(y))
+
+    def loss(y, perc):
+        return (integral(y) - TOT * perc) ** 2
+
+    alpha = torch.tensor(1.0, requires_grad=True)
+    optimizer = torch.optim.Adam([alpha], lr=0.1)
+
+    for _ in range(10000):
+        optimizer.zero_grad()
+        loss_val = loss(y ** (alpha**2), perc)
+        loss_val.backward()
+        optimizer.step()
+        if loss_val.item() < tolerance**2:
+            break
+
+    return y ** (alpha**2)
+
+
+def get_layer_name(model: nn.Module, layer: nn.Module):
+    for name, module in model.named_modules():
+        if module == layer:
+            return name
+    return None
