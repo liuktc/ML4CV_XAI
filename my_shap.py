@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from masking import channel_mean_masking
 from tqdm.auto import tqdm
-from util import cut_model_from_layer
+from utils import cut_model_from_layer
 import os
 import math
 import numpy as np

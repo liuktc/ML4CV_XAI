@@ -126,7 +126,7 @@ def set_relu_inplace(model: nn.Module, inplace=False):
             set_relu_inplace(child)
 
 
-def scale_tensor(y: torch.Tensor, perc: float = 0.5, tolerance: float = 1e-5):
+def scale_single_tensor(y: torch.Tensor, perc: float = 0.5, tolerance: float = 1e-5):
     """
     Scale the input tensor so that the area under the curve is perc of the total area.
     y is assumed to be a 2D tensor whose values are in the range [0,1].
@@ -143,6 +143,7 @@ def scale_tensor(y: torch.Tensor, perc: float = 0.5, tolerance: float = 1e-5):
     assert 0 <= perc <= 1, "perc must be in the range [0,1]"
     assert 0 <= tolerance, "tolerance must be positive"
     assert y.min() == 0 and y.max() == 1, "y must be in the range [0,1]"
+    y = y.clone().detach()
 
     H, W = y.shape
     TOT = H * W
@@ -165,6 +166,32 @@ def scale_tensor(y: torch.Tensor, perc: float = 0.5, tolerance: float = 1e-5):
             break
 
     return y ** (alpha**2)
+
+
+def scale_saliencies(
+    saliencies: torch.Tensor, perc: float = 0.5, tolerance: float = 1e-5
+):
+    """
+    Scale the input tensor so that the area under the curve is perc of the total area.
+    y is assumed to be a 2D tensor whose values are in the range [0,1].
+
+    Args:
+        - y (torch.Tensor): 2D tensor whose values are in the range [0,1].
+        - perc (float, optional): Percentage of the total area. Defaults to 0.5.
+        - tolerance (float, optional): Tolerance on the result. Defaults to 1e-3.
+
+    Returns:
+        torch.Tensor: The scaled version of y.
+    """
+    # y.shape = (B, C, H, W)
+    B, C, H, W = saliencies.shape
+
+    assert C == 1, "Only single channel saliencies are supported"
+
+    for b in range(B):
+        saliencies[b, 0] = scale_single_tensor(saliencies[b, 0], perc, tolerance)
+
+    return saliencies
 
 
 def get_layer_name(model: nn.Module, layer: nn.Module):

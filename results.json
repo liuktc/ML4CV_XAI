@@ -1,0 +1,32 @@
+{
+  "VGG": {
+    "_GradCAMPlusPlus": {
+      "features.6": {
+        "avg_drop": 9.826705932617188,
+        "increase": 25.0,
+        "insertion_curve_AUC": 0.8033646941184998,
+        "deletion_curve_AUC": 0.33377328515052795
+      },
+      "features.16": {
+        "avg_drop": 1.4009959697723389,
+        "increase": 25.0,
+        "insertion_curve_AUC": 0.9179061651229858,
+        "deletion_curve_AUC": 0.3770475685596466
+      }
+    },
+    "_DeepLiftShap": {
+      "features.6": {
+        "avg_drop": 5.061036109924316,
+        "increase": 50.0,
+        "insertion_curve_AUC": 0.9614223837852478,
+        "deletion_curve_AUC": 0.1937897503376007
+      },
+      "features.16": {
+        "avg_drop": 0.5026893019676208,
+        "increase": 50.0,
+        "insertion_curve_AUC": 0.9560117125511169,
+        "deletion_curve_AUC": 0.3499658405780792
+      }
+    }
+  }
+}
