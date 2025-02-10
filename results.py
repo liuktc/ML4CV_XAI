@@ -25,6 +25,9 @@ class ResultMetrics:
         if os.path.exists(self.path):
             with open(self.path, "r") as f:
                 self.results = json.load(f)
+        else:
+            print(f"Results file not found. Creating new results file {self.path}.")
+            self.results = {}
 
         self.save_results()
 
@@ -72,4 +75,4 @@ class ResultMetrics:
 
     def save_results(self):
         with open(self.path, "w") as f:
-            json.dump(self.results, f)
+            json.dump(self.results, f, indent=4)

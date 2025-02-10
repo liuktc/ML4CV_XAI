@@ -1,14 +1,15 @@
-import torch
-import torch.nn as nn
-from masking import channel_mean_masking
-from tqdm.auto import tqdm
-from utils import cut_model_from_layer
-import os
 import math
-import numpy as np
+import os
 
 import matplotlib.pyplot as plt
+import numpy as np
+import torch
+import torch.nn as nn
 from matplotlib.colors import TwoSlopeNorm
+from tqdm.auto import tqdm
+
+from masking import channel_mean_masking
+from utils import cut_model_from_layer
 
 
 def calculate_class_confidence(
