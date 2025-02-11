@@ -61,13 +61,13 @@ def calculate_metrics(
         for layer in layers
     }
 
+    # Use the train_dl as baseline distribution
+    baseline_dist = torch.cat([images for images, _ in train_dl]).to(device)
+
     for layer in layers:
         for images, labels in tqdm(test_dl):
             labels = labels.to(device).reshape(-1)
             images = images.to(device)
-
-            # Use the train_dl as baseline distribution
-            baseline_dist = torch.cat([images for images, _ in train_dl]).to(device)
 
             attributions = attribute_method.attribute(
                 model,
@@ -108,6 +108,11 @@ def calculate_metrics(
             res[layer_names[layer]]["deletion_curve_AUC"].append(
                 deletion_curve_AUC_score
             )
+
+            # **Explicitly delete tensors and clear cache**
+            del images, labels, baseline_dist, attributions, saliency_maps
+            del avg_drop, increase, insertion_curve_AUC_score, deletion_curve_AUC_score
+            torch.cuda.empty_cache()
 
         # For each layer, average the results
         res[layer_names[layer]]["avg_drop"] = torch.mean(
