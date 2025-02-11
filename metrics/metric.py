@@ -67,7 +67,7 @@ def calculate_metrics(
             images = images.to(device)
 
             # Use the train_dl as baseline distribution
-            baseline_dist = torch.cat([images for images, _ in train_dl])
+            baseline_dist = torch.cat([images for images, _ in train_dl]).to(device)
 
             attributions = attribute_method.attribute(
                 model,
