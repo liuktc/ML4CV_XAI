@@ -8,7 +8,7 @@ import torch.nn as nn
 from matplotlib.colors import TwoSlopeNorm
 from tqdm.auto import tqdm
 
-from masking import channel_mean_masking
+from utils.masking import channel_mean_masking
 from utils import cut_model_from_layer
 
 

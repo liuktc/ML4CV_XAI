@@ -1,10 +1,10 @@
 import torch
-from model import ResNet18
+from models.VGG11 import ResNet18
 from torchvision import transforms
 import shap
 from PIL import Image
 import matplotlib.pyplot as plt
-from masking import ChannelMeanMask, channel_mean_masking
+from utils.masking import ChannelMeanMask, channel_mean_masking
 import numpy as np
 
 # torch.set_grad_enabled(False)

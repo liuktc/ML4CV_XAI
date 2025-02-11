@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from captum.attr import DeepLiftShap
-from utils import cut_model_to_layer, cut_model_from_layer
+from .util import cut_model_to_layer, cut_model_from_layer
 from pytorch_grad_cam import GradCAMPlusPlus
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from typing import List

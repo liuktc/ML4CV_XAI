@@ -35,12 +35,12 @@ def channel_mean_masking(
         # Replace masked-out pixels with the channel average
         masked_image = image * masks + (1 - masks) * channel_means
         return masked_image
-    elif isinstance(mask, np.ndarray) and isinstance(mask, np.ndarray):
+    elif isinstance(masks, np.ndarray) and isinstance(masks, np.ndarray):
         # Compute the channel-wise spatial average
         channel_means = image.mean(axis=(1, 2), keepdims=True)  # Shape: (C, 1, 1)
 
         # Expand mask to apply to all channels
-        mask = np.expand_dims(mask, axis=0)
+        mask = np.expand_dims(masks, axis=0)
 
         # Replace masked-out pixels with the channel average
         masked_image = image * mask + (1 - mask) * channel_means
