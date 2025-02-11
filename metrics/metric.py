@@ -110,7 +110,7 @@ def calculate_metrics(
             )
 
             # **Explicitly delete tensors and clear cache**
-            del images, labels, baseline_dist, attributions, saliency_maps
+            del images, labels, attributions, saliency_maps
             del avg_drop, increase, insertion_curve_AUC_score, deletion_curve_AUC_score
             torch.cuda.empty_cache()
 
