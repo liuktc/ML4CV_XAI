@@ -111,8 +111,8 @@ def calculate_metrics(
 
             # **Explicitly delete tensors and clear cache**
             del images, labels, attributions, saliency_maps
-            del avg_drop, increase, insertion_curve_AUC_score, deletion_curve_AUC_score
             torch.cuda.empty_cache()
+            # del avg_drop, increase, insertion_curve_AUC_score, deletion_curve_AUC_score
 
         # For each layer, average the results
         res[layer_names[layer]]["avg_drop"] = torch.mean(
