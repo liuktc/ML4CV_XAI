@@ -89,13 +89,15 @@ def calculate_metrics(
             if rescale_saliency:
                 saliency_maps = scale_saliencies(saliency_maps, perc=rescale_perc)
 
-            avg_drop = average_drop(model, images, saliency_maps, labels)
-            increase = increase_in_confidence(model, images, saliency_maps, labels)
+            avg_drop = average_drop(model, images, saliency_maps, labels, device)
+            increase = increase_in_confidence(
+                model, images, saliency_maps, labels, device
+            )
             insertion_curve_AUC_score = insertion_curve_AUC(
-                model, images, saliency_maps, labels
+                model, images, saliency_maps, labels, device
             )
             deletion_curve_AUC_score = deletion_curve_AUC(
-                model, images, saliency_maps, labels
+                model, images, saliency_maps, labels, device
             )
 
             res[layer_names[layer]]["avg_drop"].append(avg_drop)
