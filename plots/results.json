@@ -1,0 +1,132 @@
+{
+    "VGG11": {
+        "_DeepLiftShap": {
+            "features.16": {
+                "avg_drop": 75.70064544677734,
+                "increase": 48.14453125,
+                "insertion_curve_AUC": 0.8452380895614624,
+                "deletion_curve_AUC": 0.28244054317474365
+            },
+            "features.0": {
+                "avg_drop": 34.83549880981445,
+                "increase": 34.27734375,
+                "insertion_curve_AUC": 0.6413059830665588,
+                "deletion_curve_AUC": 0.21468667685985565
+            },
+            "features.1": {
+                "avg_drop": 35.43818664550781,
+                "increase": 34.765625,
+                "insertion_curve_AUC": 0.6232591271400452,
+                "deletion_curve_AUC": 0.22187232971191406
+            },
+            "features.2": {
+                "avg_drop": 18.609756469726562,
+                "increase": 51.26953125,
+                "insertion_curve_AUC": 0.8348044753074646,
+                "deletion_curve_AUC": 0.1649961769580841
+            },
+            "features.3": {
+                "avg_drop": 35.0972900390625,
+                "increase": 32.32421875,
+                "insertion_curve_AUC": 0.8302034735679626,
+                "deletion_curve_AUC": 0.1467260867357254
+            },
+            "features.4": {
+                "avg_drop": 35.35576248168945,
+                "increase": 33.0078125,
+                "insertion_curve_AUC": 0.810918927192688,
+                "deletion_curve_AUC": 0.14755785465240479
+            },
+            "features.5": {
+                "avg_drop": 18.443931579589844,
+                "increase": 51.26953125,
+                "insertion_curve_AUC": 0.8643461465835571,
+                "deletion_curve_AUC": 0.1914089471101761
+            },
+            "features.6": {
+                "avg_drop": 22.045482635498047,
+                "increase": 44.3359375,
+                "insertion_curve_AUC": 0.8580406308174133,
+                "deletion_curve_AUC": 0.18954548239707947
+            },
+            "features.7": {
+                "avg_drop": 22.045452117919922,
+                "increase": 44.3359375,
+                "insertion_curve_AUC": 0.8580411076545715,
+                "deletion_curve_AUC": 0.18954570591449738
+            },
+            "features.8": {
+                "avg_drop": 36.03480911254883,
+                "increase": 33.49609375,
+                "insertion_curve_AUC": 0.8243838548660278,
+                "deletion_curve_AUC": 0.16681312024593353
+            },
+            "features.9": {
+                "avg_drop": 36.388179779052734,
+                "increase": 32.91015625,
+                "insertion_curve_AUC": 0.8130394220352173,
+                "deletion_curve_AUC": 0.16791611909866333
+            },
+            "features.10": {
+                "avg_drop": 17.09829330444336,
+                "increase": 50.68359375,
+                "insertion_curve_AUC": 0.864311158657074,
+                "deletion_curve_AUC": 0.2180221676826477
+            },
+            "features.11": {
+                "avg_drop": 21.952136993408203,
+                "increase": 44.23828125,
+                "insertion_curve_AUC": 0.8498138189315796,
+                "deletion_curve_AUC": 0.21289458870887756
+            },
+            "features.12": {
+                "avg_drop": 21.952136993408203,
+                "increase": 44.23828125,
+                "insertion_curve_AUC": 0.8498138785362244,
+                "deletion_curve_AUC": 0.21289487183094025
+            },
+            "features.13": {
+                "avg_drop": 36.35023498535156,
+                "increase": 35.3515625,
+                "insertion_curve_AUC": 0.8152470588684082,
+                "deletion_curve_AUC": 0.17301662266254425
+            },
+            "features.14": {
+                "avg_drop": 34.936954498291016,
+                "increase": 35.9375,
+                "insertion_curve_AUC": 0.8125600814819336,
+                "deletion_curve_AUC": 0.1807992160320282
+            },
+            "features.15": {
+                "avg_drop": 14.614466667175293,
+                "increase": 54.39453125,
+                "insertion_curve_AUC": 0.8603157997131348,
+                "deletion_curve_AUC": 0.27485591173171997
+            },
+            "features.17": {
+                "avg_drop": 18.6415958404541,
+                "increase": 47.0703125,
+                "insertion_curve_AUC": 0.8436673879623413,
+                "deletion_curve_AUC": 0.28397664427757263
+            },
+            "features.18": {
+                "avg_drop": 28.229816436767578,
+                "increase": 37.40234375,
+                "insertion_curve_AUC": 0.8162063956260681,
+                "deletion_curve_AUC": 0.2533525228500366
+            },
+            "features.19": {
+                "avg_drop": 27.446048736572266,
+                "increase": 37.890625,
+                "insertion_curve_AUC": 0.8195933103561401,
+                "deletion_curve_AUC": 0.2741389274597168
+            },
+            "features.20": {
+                "avg_drop": 11.146778106689453,
+                "increase": 57.421875,
+                "insertion_curve_AUC": 0.8470245003700256,
+                "deletion_curve_AUC": 0.3242989480495453
+            }
+        }
+    }
+}
