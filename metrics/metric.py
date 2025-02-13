@@ -77,21 +77,17 @@ def calculate_metrics(
                 baseline_dist=baseline_dist,
             )
 
-            print(attributions)
-            print(attributions.max(), attributions.min())
-            print(attributions.shape)
-
             up = nn.Upsample(size=images.shape[2:], mode=upsample)
             saliency_maps = up(attributions)
 
-            print(saliency_maps)
-            print(saliency_maps.max(), saliency_maps.min())
-            print(saliency_maps.shape)
-            print("AAAAAAAAAAAAA\n\n\n")
-            print(
-                saliency_maps.amax(dim=(2, 3), keepdim=True),
-                saliency_maps.amin(dim=(2, 3), keepdim=True),
-            )
+            if (
+                saliency_maps.amax(dim=(2, 3), keepdim=True)
+                == saliency_maps.amin(dim=(2, 3), keepdim=True)
+            ).any():
+                print("A saliency map is constant, skipping batch")
+                del images, labels, attributions, saliency_maps
+                torch.cuda.empty_cache()
+                continue
 
             saliency_maps = (
                 saliency_maps - saliency_maps.amin(dim=(2, 3), keepdim=True)
@@ -99,11 +95,6 @@ def calculate_metrics(
                 saliency_maps.amax(dim=(2, 3), keepdim=True)
                 - saliency_maps.amin(dim=(2, 3), keepdim=True)
             )
-
-            print("BBBBBBBBBBBB\n\n\n")
-            print(saliency_maps)
-            print(saliency_maps.max(), saliency_maps.min())
-            print(saliency_maps.shape)
 
             if rescale_saliency:
                 saliency_maps = scale_saliencies(saliency_maps, perc=rescale_perc)
