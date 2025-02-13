@@ -89,7 +89,7 @@ def calculate_metrics(
             print(saliency_maps.shape)
             print("AAAAAAAAAAAAA\n\n\n")
             print(
-                saliency_maps.amin(dim=(2, 3), keepdim=True),
+                saliency_maps.amax(dim=(2, 3), keepdim=True),
                 saliency_maps.amin(dim=(2, 3), keepdim=True),
             )
 
@@ -100,6 +100,7 @@ def calculate_metrics(
                 - saliency_maps.amin(dim=(2, 3), keepdim=True)
             )
 
+            print("BBBBBBBBBBBB\n\n\n")
             print(saliency_maps)
             print(saliency_maps.max(), saliency_maps.min())
             print(saliency_maps.shape)
