@@ -81,8 +81,11 @@ def calculate_metrics(
             saliency_maps = up(attributions)
 
             if (
-                saliency_maps.amax(dim=(2, 3), keepdim=True)
-                == saliency_maps.amin(dim=(2, 3), keepdim=True)
+                torch.abs(
+                    saliency_maps.amax(dim=(2, 3), keepdim=True)
+                    - saliency_maps.amin(dim=(2, 3), keepdim=True)
+                )
+                < 1e-6
             ).any():
                 print("A saliency map is constant, skipping batch")
                 del images, labels, attributions, saliency_maps
