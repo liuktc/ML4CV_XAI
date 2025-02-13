@@ -77,14 +77,23 @@ def calculate_metrics(
                 baseline_dist=baseline_dist,
             )
 
+            print(attributions)
+            print(attributions.max(), attributions.min())
+
             up = nn.Upsample(size=images.shape[2:], mode=upsample)
             saliency_maps = up(attributions)
+
+            print(saliency_maps)
+            print(saliency_maps.max(), saliency_maps.min())
             saliency_maps = (
                 saliency_maps - saliency_maps.amin(dim=(2, 3), keepdim=True)
             ) / (
                 saliency_maps.amax(dim=(2, 3), keepdim=True)
                 - saliency_maps.amin(dim=(2, 3), keepdim=True)
             )
+
+            print(saliency_maps)
+            print(saliency_maps.max(), saliency_maps.min())
 
             if rescale_saliency:
                 saliency_maps = scale_saliencies(saliency_maps, perc=rescale_perc)
