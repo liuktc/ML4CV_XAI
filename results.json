@@ -26,6 +26,12 @@
                 "increase": 25.0,
                 "insertion_curve_AUC": 0.9115763306617737,
                 "deletion_curve_AUC": 0.3255438208580017
+            },
+            "features.0": {
+                "avg_drop": 140.27734375,
+                "increase": 0.0,
+                "insertion_curve_AUC": 0.8855506181716919,
+                "deletion_curve_AUC": 0.3385893404483795
             }
         }
     }

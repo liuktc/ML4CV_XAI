@@ -8,6 +8,17 @@ from typing import List
 import numpy as np
 
 
+import psutil
+import os
+
+
+def print_memory_usage():
+    process = psutil.Process(os.getpid())
+    print(
+        f"Memory used: {process.memory_info().rss / 1024**2:.2f} MB"
+    )  # Resident Set Size (RSS)
+
+
 class AttributionMethod:
     def __init__(self):
         pass
@@ -55,6 +66,12 @@ class _DeepLiftShap(AttributionMethod):
 
 
 class _GradCAMPlusPlus(AttributionMethod):
+    def __init__(self, model: nn.Module, target_layer: str | nn.Module):
+        self.model = model
+        self.target_layer = target_layer
+
+        self.cam = GradCAMPlusPlus(model=model, target_layers=[target_layer])
+
     def attribute(
         self,
         model: nn.Module,
@@ -63,12 +80,34 @@ class _GradCAMPlusPlus(AttributionMethod):
         target: torch.Tensor,
         baseline_dist: torch.Tensor = None,
     ):
-        cam = GradCAMPlusPlusNoResize(model=model, target_layers=[layer])
-        targets = [ClassifierOutputTarget(t) for t in target]
-        grayscale_cam = cam(input_tensor=input_tensor, targets=targets)
-        grayscale_cam = torch.Tensor(grayscale_cam)
-        grayscale_cam = grayscale_cam.unsqueeze(1)
-        return grayscale_cam
+        try:
+            # print("-" * 80)
+            # print_memory_usage()
+            targets = [ClassifierOutputTarget(t) for t in target]
+
+            # Compute GradCAM
+            grayscale_cam = self.cam(input_tensor=input_tensor, targets=targets)
+
+            # Convert to tensor efficiently and move to same device as input
+            grayscale_cam_tensor = torch.from_numpy(grayscale_cam).to(
+                input_tensor.device
+            )
+            grayscale_cam_tensor = grayscale_cam_tensor.unsqueeze(1)
+
+        finally:
+            # Cleanup
+            # if "cam" in locals():
+            #     # del cam.activations_and_grads
+            #     del cam
+            #     # del targets
+            #     # del grayscale_cam
+            #     # del input_tensor
+            #     # del grayscale_cam_tensor
+            # torch.cuda.empty_cache()
+            pass
+            # print_memory_usage()
+
+        return grayscale_cam_tensor
 
 
 class GradCAMPlusPlusNoResize(GradCAMPlusPlus):

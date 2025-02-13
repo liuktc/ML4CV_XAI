@@ -7,6 +7,8 @@ import torch.utils.data
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
+import numpy as np
+
 from utils.attributions import AttributionMethod
 from results import ResultMetrics
 from utils import get_layer_name, scale_saliencies
@@ -15,6 +17,16 @@ from .average_drop import average_drop
 from .increase_in_confidence import increase_in_confidence
 from .insertion_curve import insertion_curve_AUC
 from .deletion_curve import deletion_curve_AUC
+
+import psutil
+import os
+
+
+def print_memory_usage():
+    process = psutil.Process(os.getpid())
+    print(
+        f"Memory used: {process.memory_info().rss / 1024**2:.2f} MB"
+    )  # Resident Set Size (RSS)
 
 
 def calculate_metrics(
@@ -31,6 +43,7 @@ def calculate_metrics(
     rescale_saliency: bool = False,
     rescale_perc: float = 0.3,
     model_name: str = None,
+    debug: bool = False,
 ) -> dict:
     """Function to calculate all the different metrics on the model using the given attribution method
 
@@ -66,6 +79,10 @@ def calculate_metrics(
 
     for layer in layers:
         for images, labels in tqdm(test_dl):
+            if debug:
+                print("-" * 80)
+                print_memory_usage()
+
             labels = labels.to(device).reshape(-1)
             images = images.to(device)
 
@@ -76,6 +93,8 @@ def calculate_metrics(
                 target=labels,
                 baseline_dist=baseline_dist,
             )
+            if debug:
+                print_memory_usage()
 
             up = nn.Upsample(size=images.shape[2:], mode=upsample)
             saliency_maps = up(attributions)
@@ -102,16 +121,90 @@ def calculate_metrics(
             if rescale_saliency:
                 saliency_maps = scale_saliencies(saliency_maps, perc=rescale_perc)
 
-            avg_drop = average_drop(model, images, saliency_maps, labels, device)
-            increase = increase_in_confidence(
-                model, images, saliency_maps, labels, device
+            if saliency_maps.isnan().any():
+                print("A saliency map is NaN, skipping batch")
+                del images, labels, attributions, saliency_maps
+                torch.cuda.empty_cache()
+                continue
+
+            if debug:
+                print_memory_usage()
+
+            avg_drop = (
+                (
+                    average_drop(model, images, saliency_maps, labels, device)
+                    .detach()
+                    .cpu()
+                )
+                .mean()
+                .item()
             )
-            insertion_curve_AUC_score = insertion_curve_AUC(
-                model, images, saliency_maps, labels, device
+
+            if debug:
+                print_memory_usage()
+
+            increase = (
+                (
+                    increase_in_confidence(model, images, saliency_maps, labels, device)
+                    .detach()
+                    .cpu()
+                )
+                .mean()
+                .item()
             )
-            deletion_curve_AUC_score = deletion_curve_AUC(
-                model, images, saliency_maps, labels, device
+
+            if debug:
+                print_memory_usage()
+
+            insertion_curve_AUC_score = (
+                (
+                    insertion_curve_AUC(model, images, saliency_maps, labels, device)
+                    .detach()
+                    .cpu()
+                )
+                .mean()
+                .item()
             )
+
+            if debug:
+                print_memory_usage()
+
+            deletion_curve_AUC_score = (
+                (
+                    deletion_curve_AUC(model, images, saliency_maps, labels, device)
+                    .detach()
+                    .cpu()
+                )
+                .mean()
+                .item()
+            )
+
+            if debug:
+                print_memory_usage()
+
+            # a = res[layer_names[layer]]["avg_drop"]
+            # res[layer_names[layer]]["avg_drop"] = (
+            #     (a[0] * a[1] + avg_drop) / (a[1] + 1),
+            #     a[1] + 1,
+            # )
+
+            # b = res[layer_names[layer]]["increase"]
+            # res[layer_names[layer]]["increase"] = (
+            #     (b[0] * b[1] + increase) / (b[1] + 1),
+            #     b[1] + 1,
+            # )
+
+            # c = res[layer_names[layer]]["insertion_curve_AUC"]
+            # res[layer_names[layer]]["insertion_curve_AUC"] = (
+            #     (c[0] * c[1] + insertion_curve_AUC_score) / (c[1] + 1),
+            #     c[1] + 1,
+            # )
+
+            # d = res[layer_names[layer]]["deletion_curve_AUC"]
+            # res[layer_names[layer]]["deletion_curve_AUC"] = (
+            #     (d[0] * d[1] + deletion_curve_AUC_score) / (d[1] + 1),
+            #     d[1] + 1,
+            # )
 
             res[layer_names[layer]]["avg_drop"].append(avg_drop)
             res[layer_names[layer]]["increase"].append(increase)
@@ -128,18 +221,40 @@ def calculate_metrics(
             # del avg_drop, increase, insertion_curve_AUC_score, deletion_curve_AUC_score
 
         # For each layer, average the results
-        res[layer_names[layer]]["avg_drop"] = torch.mean(
-            torch.stack(res[layer_names[layer]]["avg_drop"])
-        ).item()
-        res[layer_names[layer]]["increase"] = torch.mean(
-            torch.stack(res[layer_names[layer]]["increase"])
-        ).item()
-        res[layer_names[layer]]["insertion_curve_AUC"] = torch.mean(
-            torch.stack(res[layer_names[layer]]["insertion_curve_AUC"])
-        ).item()
-        res[layer_names[layer]]["deletion_curve_AUC"] = torch.mean(
-            torch.stack(res[layer_names[layer]]["deletion_curve_AUC"])
-        ).item()
+        # res[layer_names[layer]]["avg_drop"] = torch.mean(
+        #     torch.stack(res[layer_names[layer]]["avg_drop"])
+        # ).item()
+        # res[layer_names[layer]]["increase"] = torch.mean(
+        #     torch.stack(res[layer_names[layer]]["increase"])
+        # ).item()
+        # res[layer_names[layer]]["insertion_curve_AUC"] = torch.mean(
+        #     torch.stack(res[layer_names[layer]]["insertion_curve_AUC"])
+        # ).item()
+        # res[layer_names[layer]]["deletion_curve_AUC"] = torch.mean(
+        #     torch.stack(res[layer_names[layer]]["deletion_curve_AUC"])
+        # ).item()
+
+        res[layer_names[layer]]["avg_drop"] = np.mean(
+            res[layer_names[layer]]["avg_drop"]
+        )
+        res[layer_names[layer]]["increase"] = np.mean(
+            res[layer_names[layer]]["increase"]
+        )
+        res[layer_names[layer]]["insertion_curve_AUC"] = np.mean(
+            res[layer_names[layer]]["insertion_curve_AUC"]
+        )
+        res[layer_names[layer]]["deletion_curve_AUC"] = np.mean(
+            res[layer_names[layer]]["deletion_curve_AUC"]
+        )
+
+        # res[layer_names[layer]]["avg_drop"] = res[layer_names[layer]]["avg_drop"][0]
+        # res[layer_names[layer]]["increase"] = res[layer_names[layer]]["increase"][0]
+        # res[layer_names[layer]]["insertion_curve_AUC"] = res[layer_names[layer]][
+        #     "insertion_curve_AUC"
+        # ][0]
+        # res[layer_names[layer]]["deletion_curve_AUC"] = res[layer_names[layer]][
+        #     "deletion_curve_AUC"
+        # ][0]
 
         result_metrics.add_results_all_layers(
             model_name, attribute_method.__class__.__name__, res
