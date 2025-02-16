@@ -143,16 +143,14 @@ def scale_single_tensor(y: torch.Tensor, perc: float = 0.5, tolerance: float = 1
     assert 0 <= perc <= 1, "perc must be in the range [0,1]"
     assert 0 <= tolerance, "tolerance must be positive"
     assert y.min() == 0 and y.max() == 1, "y must be in the range [0,1]"
+
     y = y.clone().detach()
 
     H, W = y.shape
     TOT = H * W
 
-    def integral(y):
-        return torch.trapz(torch.trapz(y))
-
-    def loss(y, perc):
-        return (integral(y) - TOT * perc) ** 2
+    def loss(y: torch.Tensor, perc: float):
+        return (y.sum() - TOT * perc) ** 2
 
     alpha = torch.tensor(1.0, requires_grad=True)
     optimizer = torch.optim.Adam([alpha], lr=0.1)
@@ -162,7 +160,7 @@ def scale_single_tensor(y: torch.Tensor, perc: float = 0.5, tolerance: float = 1
         loss_val = loss(y ** (alpha**2), perc)
         loss_val.backward()
         optimizer.step()
-        if loss_val.item() < tolerance**2:
+        if loss_val.item() < tolerance:
             break
 
     return y ** (alpha**2)
