@@ -134,7 +134,7 @@ def scale_single_tensor(y: torch.Tensor, perc: float = 0.5, tolerance: float = 1
     Args:
         - y (torch.Tensor): 2D tensor whose values are in the range [0,1].
         - perc (float, optional): Percentage of the total area. Defaults to 0.5.
-        - tolerance (float, optional): Tolerance on the result. Defaults to 1e-3.
+        - tolerance (float, optional): Tolerance on the result. Defaults to 1e-5.
 
     Returns:
         torch.Tensor: The scaled version of y.
