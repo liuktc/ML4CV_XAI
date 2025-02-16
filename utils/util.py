@@ -199,3 +199,17 @@ def get_layer_name(model: nn.Module, layer: nn.Module):
         if module == layer:
             return name
     return None
+
+
+def min_max_normalize(x: torch.Tensor) -> torch.Tensor:
+    """Normalize the input tensor to the range [0,1].
+        It works along the last 2 dimensions.
+    Args:
+        x (torch.Tensor): The input tensor of shape (B, C, H, W).
+
+    Returns:
+        (torch.Tensor): The normalized tensor.
+    """
+    # Normalize the input tensor to the range [0,1]
+    # It works along the last 2 dimensions
+    return (x - x.amin((2, 3), True)) / (x.amax((2, 3), True) - x.amin((2, 3), True))

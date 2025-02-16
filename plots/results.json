@@ -127,6 +127,134 @@
                 "insertion_curve_AUC": 0.8470245003700256,
                 "deletion_curve_AUC": 0.3242989480495453
             }
+        },
+        "_GradCAMPlusPlus": {
+            "features.0": {
+                "avg_drop": 144.8628910632405,
+                "increase": 3.831041257367387,
+                "insertion_curve_AUC": 0.6757167549492802,
+                "deletion_curve_AUC": 0.3567539529741352
+            },
+            "features.1": {
+                "avg_drop": 125.90551617052041,
+                "increase": 4.803921568627451,
+                "insertion_curve_AUC": 0.7184260341758821,
+                "deletion_curve_AUC": 0.32923343097608465
+            },
+            "features.2": {
+                "avg_drop": 129.7707407943642,
+                "increase": 4.500978473581213,
+                "insertion_curve_AUC": 0.7250886496644897,
+                "deletion_curve_AUC": 0.31185909841071136
+            },
+            "features.3": {
+                "avg_drop": 147.16832081088796,
+                "increase": 3.90625,
+                "insertion_curve_AUC": 0.6909376356343273,
+                "deletion_curve_AUC": 0.29944990124022297
+            },
+            "features.4": {
+                "avg_drop": 80.82812033766822,
+                "increase": 10.64453125,
+                "insertion_curve_AUC": 0.73035526991589,
+                "deletion_curve_AUC": 0.31850244863198895
+            },
+            "features.5": {
+                "avg_drop": 75.51867172605137,
+                "increase": 11.9140625,
+                "insertion_curve_AUC": 0.7338787950375263,
+                "deletion_curve_AUC": 0.3194985742939025
+            },
+            "features.6": {
+                "avg_drop": 153.40678490651771,
+                "increase": 3.3203125,
+                "insertion_curve_AUC": 0.6769427277067734,
+                "deletion_curve_AUC": 0.27869237561935734
+            },
+            "features.7": {
+                "avg_drop": 53.333604695953,
+                "increase": 18.84765625,
+                "insertion_curve_AUC": 0.7255976008382277,
+                "deletion_curve_AUC": 0.3052150488256302
+            },
+            "features.8": {
+                "avg_drop": 131.00405814987607,
+                "increase": 5.17578125,
+                "insertion_curve_AUC": 0.6762913740094518,
+                "deletion_curve_AUC": 0.2632806108758814
+            },
+            "features.9": {
+                "avg_drop": 52.754197040259896,
+                "increase": 18.75,
+                "insertion_curve_AUC": 0.7291413477069,
+                "deletion_curve_AUC": 0.2874991292846971
+            },
+            "features.10": {
+                "avg_drop": 40.79838299290486,
+                "increase": 22.94921875,
+                "insertion_curve_AUC": 0.7441597551078303,
+                "deletion_curve_AUC": 0.34868160677979176
+            },
+            "features.11": {
+                "avg_drop": 149.21461517509238,
+                "increase": 3.685258964143426,
+                "insertion_curve_AUC": 0.716477097090022,
+                "deletion_curve_AUC": 0.3549711502424304
+            },
+            "features.12": {
+                "avg_drop": 45.189990803980436,
+                "increase": 23.6328125,
+                "insertion_curve_AUC": 0.7491612333396915,
+                "deletion_curve_AUC": 0.3153495111346274
+            },
+            "features.13": {
+                "avg_drop": 101.38111480386578,
+                "increase": 11.42578125,
+                "insertion_curve_AUC": 0.7184236441389658,
+                "deletion_curve_AUC": 0.34985422043973813
+            },
+            "features.14": {
+                "avg_drop": 54.85347479813208,
+                "increase": 20.60546875,
+                "insertion_curve_AUC": 0.761067460218328,
+                "deletion_curve_AUC": 0.28140710780098743
+            },
+            "features.15": {
+                "avg_drop": 33.24059010168094,
+                "increase": 29.4921875,
+                "insertion_curve_AUC": 0.7823972093610791,
+                "deletion_curve_AUC": 0.36779188905347837
+            },
+            "features.16": {
+                "avg_drop": 140.04930985323665,
+                "increase": 4.767726161369193,
+                "insertion_curve_AUC": 0.7496127371145709,
+                "deletion_curve_AUC": 0.457350409687622
+            },
+            "features.17": {
+                "avg_drop": 34.58962231749757,
+                "increase": 29.58984375,
+                "insertion_curve_AUC": 0.7884785050264327,
+                "deletion_curve_AUC": 0.32290615087913466
+            },
+            "features.18": {
+                "avg_drop": 96.27077582295955,
+                "increase": 12.202380952380953,
+                "insertion_curve_AUC": 0.7493134655708832,
+                "deletion_curve_AUC": 0.4419382578593546
+            },
+            "features.19": {
+                "avg_drop": 33.47195257092829,
+                "increase": 31.4453125,
+                "insertion_curve_AUC": 0.8056139447107853,
+                "deletion_curve_AUC": 0.34521983349259244
+            },
+            "features.20": {
+                "avg_drop": 20.721815086679385,
+                "increase": 38.96484375,
+                "insertion_curve_AUC": 0.8174943069898291,
+                "deletion_curve_AUC": 0.38078527791731176
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from captum.attr import DeepLiftShap
-from .util import cut_model_to_layer, cut_model_from_layer
+from .util import cut_model_to_layer, cut_model_from_layer, min_max_normalize
 from pytorch_grad_cam import GradCAMPlusPlus
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from typing import List
@@ -42,6 +42,7 @@ class _DeepLiftShap(AttributionMethod):
         layer: str | nn.Module,
         target: torch.Tensor,
         baseline_dist: torch.Tensor = None,
+        normalize: bool = True,
     ):
         model_to = cut_model_to_layer(
             model, layer, included=True
@@ -62,6 +63,9 @@ class _DeepLiftShap(AttributionMethod):
         )
         attributions = attributions.sum(dim=1, keepdim=True)
 
+        if normalize:
+            attributions = min_max_normalize(attributions)
+
         return attributions
 
 
@@ -79,33 +83,19 @@ class _GradCAMPlusPlus(AttributionMethod):
         layer: str | nn.Module,
         target: torch.Tensor,
         baseline_dist: torch.Tensor = None,
+        normalize: bool = True,
     ):
-        try:
-            # print("-" * 80)
-            # print_memory_usage()
-            targets = [ClassifierOutputTarget(t) for t in target]
+        targets = [ClassifierOutputTarget(t) for t in target]
 
-            # Compute GradCAM
-            grayscale_cam = self.cam(input_tensor=input_tensor, targets=targets)
+        # Compute GradCAM
+        grayscale_cam = self.cam(input_tensor=input_tensor, targets=targets)
 
-            # Convert to tensor efficiently and move to same device as input
-            grayscale_cam_tensor = torch.from_numpy(grayscale_cam).to(
-                input_tensor.device
-            )
-            grayscale_cam_tensor = grayscale_cam_tensor.unsqueeze(1)
+        # Convert to tensor efficiently and move to same device as input
+        grayscale_cam_tensor = torch.from_numpy(grayscale_cam).to(input_tensor.device)
+        grayscale_cam_tensor = grayscale_cam_tensor.unsqueeze(1)
 
-        finally:
-            # Cleanup
-            # if "cam" in locals():
-            #     # del cam.activations_and_grads
-            #     del cam
-            #     # del targets
-            #     # del grayscale_cam
-            #     # del input_tensor
-            #     # del grayscale_cam_tensor
-            # torch.cuda.empty_cache()
-            pass
-            # print_memory_usage()
+        if normalize:
+            grayscale_cam_tensor = min_max_normalize(grayscale_cam_tensor)
 
         return grayscale_cam_tensor
 
