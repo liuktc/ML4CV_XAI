@@ -118,14 +118,14 @@ def calculate_metrics(
                 - saliency_maps.amin(dim=(2, 3), keepdim=True)
             )
 
-            if rescale_saliency:
-                saliency_maps = scale_saliencies(saliency_maps, perc=rescale_perc)
-
             if saliency_maps.isnan().any():
                 print("A saliency map is NaN, skipping batch")
                 del images, labels, attributions, saliency_maps
                 torch.cuda.empty_cache()
                 continue
+
+            if rescale_saliency:
+                saliency_maps = scale_saliencies(saliency_maps, perc=rescale_perc)
 
             if debug:
                 print_memory_usage()
