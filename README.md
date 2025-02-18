@@ -1,3 +1,7 @@
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+
 # ML4CV Explainability
 
 This repo contains the project for the exam of the course ["AI in Industry"](https://www.unibo.it/en/study/phd-professional-masters-specialisation-schools-and-other-programmes/course-unit-catalogue/course-unit/2024/446609) and ["Machine Learning for Computer Vision"](https://www.unibo.it/en/study/phd-professional-masters-specialisation-schools-and-other-programmes/course-unit-catalogue/course-unit/2024/446614). The goal of the project is to implement the ShapCAM algorithm explained in the paper [Shap-CAM: Visual Explanations for
@@ -57,3 +61,7 @@ Results are stored in JSON format with the following structure:
 ## Documentation
 
 For all the details refer to `report.pdf`.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
