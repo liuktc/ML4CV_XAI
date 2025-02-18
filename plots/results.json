@@ -256,5 +256,263 @@
                 "deletion_curve_AUC": 0.38078527791731176
             }
         }
+    },
+    "VGG11_Rescaling": {
+        "_DeepLiftShap": {
+            "features.6": {
+                "avg_drop": 34.5911372258015,
+                "increase": 33.7890625,
+                "insertion_curve_AUC": 0.815786334555014,
+                "deletion_curve_AUC": 0.18780167996737873
+            },
+            "features.16": {
+                "avg_drop": 26.623324104472488,
+                "increase": 39.74609375,
+                "insertion_curve_AUC": 0.8310326847567922,
+                "deletion_curve_AUC": 0.2986911140051234
+            },
+            "features.0": {
+                "avg_drop": 47.37423199455725,
+                "increase": 27.1484375,
+                "insertion_curve_AUC": 0.6106933130722609,
+                "deletion_curve_AUC": 0.22058700084926386
+            },
+            "features.1": {
+                "avg_drop": 54.56362225077282,
+                "increase": 25.0,
+                "insertion_curve_AUC": 0.595769704261329,
+                "deletion_curve_AUC": 0.22738559229037492
+            },
+            "features.2": {
+                "avg_drop": 38.96391182705406,
+                "increase": 31.4453125,
+                "insertion_curve_AUC": 0.7661635531112552,
+                "deletion_curve_AUC": 0.16413744798137486
+            },
+            "features.3": {
+                "avg_drop": 48.11300785298408,
+                "increase": 23.6328125,
+                "insertion_curve_AUC": 0.7768523604609072,
+                "deletion_curve_AUC": 0.14861546567954065
+            },
+            "features.4": {
+                "avg_drop": 57.551377927102294,
+                "increase": 21.2890625,
+                "insertion_curve_AUC": 0.7398651824714761,
+                "deletion_curve_AUC": 0.1518854044497857
+            },
+            "features.5": {
+                "avg_drop": 34.67891849703227,
+                "increase": 34.9609375,
+                "insertion_curve_AUC": 0.8127304270092282,
+                "deletion_curve_AUC": 0.18584468654444208
+            },
+            "features.7": {
+                "avg_drop": 34.59109019002062,
+                "increase": 33.7890625,
+                "insertion_curve_AUC": 0.815786070554168,
+                "deletion_curve_AUC": 0.1878013932682734
+            },
+            "features.8": {
+                "avg_drop": 50.165010062933106,
+                "increase": 26.07421875,
+                "insertion_curve_AUC": 0.7845189601066522,
+                "deletion_curve_AUC": 0.1694261310822185
+            },
+            "features.9": {
+                "avg_drop": 55.71314417935173,
+                "increase": 24.4140625,
+                "insertion_curve_AUC": 0.7566848395545094,
+                "deletion_curve_AUC": 0.1773316985118072
+            },
+            "features.10": {
+                "avg_drop": 26.75959964473384,
+                "increase": 41.89453125,
+                "insertion_curve_AUC": 0.8353738425357733,
+                "deletion_curve_AUC": 0.21600786520139081
+            },
+            "features.11": {
+                "avg_drop": 30.041461244466518,
+                "increase": 38.8671875,
+                "insertion_curve_AUC": 0.8266518586460734,
+                "deletion_curve_AUC": 0.21735050075994877
+            },
+            "features.12": {
+                "avg_drop": 30.041435751102654,
+                "increase": 38.8671875,
+                "insertion_curve_AUC": 0.8266517503070645,
+                "deletion_curve_AUC": 0.21734993941208813
+            },
+            "features.13": {
+                "avg_drop": 46.738271232261866,
+                "increase": 30.37109375,
+                "insertion_curve_AUC": 0.7891715237492463,
+                "deletion_curve_AUC": 0.17957706304468957
+            },
+            "features.14": {
+                "avg_drop": 49.07881000641396,
+                "increase": 28.3203125,
+                "insertion_curve_AUC": 0.7737915169709595,
+                "deletion_curve_AUC": 0.19931149218791688
+            },
+            "features.15": {
+                "avg_drop": 21.95678949474459,
+                "increase": 44.43359375,
+                "insertion_curve_AUC": 0.8421501314151101,
+                "deletion_curve_AUC": 0.2934545881998929
+            },
+            "features.17": {
+                "avg_drop": 26.623356710244025,
+                "increase": 39.74609375,
+                "insertion_curve_AUC": 0.8310326597638777,
+                "deletion_curve_AUC": 0.2986912260303143
+            },
+            "features.18": {
+                "avg_drop": 35.68298782302827,
+                "increase": 31.15234375,
+                "insertion_curve_AUC": 0.800727452551655,
+                "deletion_curve_AUC": 0.2561238858397701
+            },
+            "features.19": {
+                "avg_drop": 36.2861310710241,
+                "increase": 32.2265625,
+                "insertion_curve_AUC": 0.7981677789357491,
+                "deletion_curve_AUC": 0.30055225539217645
+            },
+            "features.20": {
+                "avg_drop": 22.128522075598653,
+                "increase": 42.48046875,
+                "insertion_curve_AUC": 0.8346526062814519,
+                "deletion_curve_AUC": 0.3557173605859134
+            }
+        },
+        "_GradCAMPlusPlus": {
+            "features.0": {
+                "avg_drop": 110.95533585604024,
+                "increase": 6.777996070726916,
+                "insertion_curve_AUC": 0.6757729739199569,
+                "deletion_curve_AUC": 0.3567778200930266
+            },
+            "features.1": {
+                "avg_drop": 61.86801487481879,
+                "increase": 12.941176470588236,
+                "insertion_curve_AUC": 0.7184262922289325,
+                "deletion_curve_AUC": 0.32923305651866924
+            },
+            "features.2": {
+                "avg_drop": 73.45753646950345,
+                "increase": 9.980430528375734,
+                "insertion_curve_AUC": 0.7250885997995472,
+                "deletion_curve_AUC": 0.3118592747313986
+            },
+            "features.3": {
+                "avg_drop": 92.16098487187992,
+                "increase": 9.375,
+                "insertion_curve_AUC": 0.6909424566547386,
+                "deletion_curve_AUC": 0.2995778954191337
+            },
+            "features.4": {
+                "avg_drop": 66.16679438598862,
+                "increase": 11.9140625,
+                "insertion_curve_AUC": 0.7303552404482616,
+                "deletion_curve_AUC": 0.3185024526192137
+            },
+            "features.5": {
+                "avg_drop": 60.27684403036028,
+                "increase": 13.8671875,
+                "insertion_curve_AUC": 0.733878793893382,
+                "deletion_curve_AUC": 0.3194985313821235
+            },
+            "features.6": {
+                "avg_drop": 121.84122255954753,
+                "increase": 5.56640625,
+                "insertion_curve_AUC": 0.6771995840681484,
+                "deletion_curve_AUC": 0.2794261178205488
+            },
+            "features.7": {
+                "avg_drop": 53.33900460512814,
+                "increase": 17.7734375,
+                "insertion_curve_AUC": 0.7255975874431897,
+                "deletion_curve_AUC": 0.30521502499323105
+            },
+            "features.8": {
+                "avg_drop": 105.91598520683578,
+                "increase": 9.27734375,
+                "insertion_curve_AUC": 0.6767410593456589,
+                "deletion_curve_AUC": 0.26463752951713104
+            },
+            "features.9": {
+                "avg_drop": 45.72912339555151,
+                "increase": 20.1171875,
+                "insertion_curve_AUC": 0.7291413066486712,
+                "deletion_curve_AUC": 0.2874999930672857
+            },
+            "features.10": {
+                "avg_drop": 39.21987871589499,
+                "increase": 23.4375,
+                "insertion_curve_AUC": 0.7441596712887986,
+                "deletion_curve_AUC": 0.34868162777911493
+            },
+            "features.11": {
+                "avg_drop": 126.60849457076822,
+                "increase": 7.768924302788845,
+                "insertion_curve_AUC": 0.7178330907739134,
+                "deletion_curve_AUC": 0.3606013907156736
+            },
+            "features.12": {
+                "avg_drop": 42.96896621086489,
+                "increase": 23.92578125,
+                "insertion_curve_AUC": 0.7491612291632919,
+                "deletion_curve_AUC": 0.3153502295135695
+            },
+            "features.13": {
+                "avg_drop": 87.4268617600228,
+                "increase": 14.55078125,
+                "insertion_curve_AUC": 0.7186984221334569,
+                "deletion_curve_AUC": 0.35115432594648155
+            },
+            "features.14": {
+                "avg_drop": 38.83331343637701,
+                "increase": 26.3671875,
+                "insertion_curve_AUC": 0.7610675186151639,
+                "deletion_curve_AUC": 0.28140735694432806
+            },
+            "features.15": {
+                "avg_drop": 32.97612989327672,
+                "increase": 29.39453125,
+                "insertion_curve_AUC": 0.7823973251797725,
+                "deletion_curve_AUC": 0.3677919847468729
+            },
+            "features.16": {
+                "avg_drop": 128.98674443611125,
+                "increase": 7.352941176470588,
+                "insertion_curve_AUC": 0.7498299393017649,
+                "deletion_curve_AUC": 0.4579008599222802
+            },
+            "features.17": {
+                "avg_drop": 35.12281897651283,
+                "increase": 28.3203125,
+                "insertion_curve_AUC": 0.7884785083588213,
+                "deletion_curve_AUC": 0.322906182229417
+            },
+            "features.18": {
+                "avg_drop": 87.16487416612861,
+                "increase": 13.988095238095237,
+                "insertion_curve_AUC": 0.7474235760210644,
+                "deletion_curve_AUC": 0.4404959526977369
+            },
+            "features.19": {
+                "avg_drop": 29.221743583148836,
+                "increase": 32.421875,
+                "insertion_curve_AUC": 0.805613940297917,
+                "deletion_curve_AUC": 0.34521963908991893
+            },
+            "features.20": {
+                "avg_drop": 24.606002717386218,
+                "increase": 34.375,
+                "insertion_curve_AUC": 0.8174943067533604,
+                "deletion_curve_AUC": 0.38078527765901526
+            }
+        }
     }
 }

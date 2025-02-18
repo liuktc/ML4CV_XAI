@@ -1,11 +1,16 @@
 captum==0.7.0
 grad_cam==1.5.4
 matplotlib==3.8.3
-numpy==2.2.2
+numpy==2.2.3
+Pillow==9.5.0
 Pillow==11.1.0
+psutil==5.9.5
+scikit_learn==1.3.2
 shap==0.46.0
 torch==2.3.0
+torch_receptive_field==0.1.0
 torcheval==0.0.7
+torchsummary==1.5.1
 torchvision==0.18.0
 tqdm==4.67.1
 typing_extensions==4.12.2
