@@ -60,7 +60,7 @@ Results are stored in JSON format with the following structure:
 
 ## Documentation
 
-For all the details refer to `report.pdf`.
+For all the details refer to [project report](https://github.com/liuktc/ML4CV_XAI/blob/main/report.pdf).
 
 ## License
 
