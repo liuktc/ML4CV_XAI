@@ -40,7 +40,7 @@ The project is structured as follows:
 
 ## Usage
 
-The main interface is provided through `main.ipynb`. The model weight are not stored here on github due to their size, but they can be downloaded from the following links:
+The main interface is provided through `main.ipynb`. The model weight are not stored here on github due to their size. Due to a OneDrive link sharing limitation, I can't provide a direct link to download the weights. If you want to run the code, please contact me. You can also train the model from scratch by running the `fine_tuning.ipynb` notebook.
 
 ## Results
 
@@ -65,3 +65,7 @@ For all the details refer to [project report](https://github.com/liuktc/ML4CV_XA
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For any question, feel free to contact me at luca.domeniconi5@studio.unibo.it
