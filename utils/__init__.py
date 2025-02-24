@@ -7,4 +7,4 @@ from .util import (
     get_layer_name,
 )
 
-from .craft_utils import calculate_craft_for_class
+from .craft_utils import calculate_craft_for_class, get_class_predictions_indices
