@@ -6,3 +6,5 @@ from .util import (
     scale_saliencies,
     get_layer_name,
 )
+
+from .craft_utils import calculate_craft_for_class
