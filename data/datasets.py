@@ -63,7 +63,11 @@ class PascalVOC2007(Dataset):
                     continue
 
                 cont += 1
-                self.indices.append((idx, cont))
+
+                label = FROM_LABEL_TO_IDX[obj["name"]]
+                label = torch.Tensor([label]).long().reshape(-1)
+
+                self.indices.append((idx, cont, label))
         # Save the indices in cache
         torch.save(self.indices, self.cache_name)
 
@@ -71,7 +75,7 @@ class PascalVOC2007(Dataset):
         return len(self.indices)
 
     def __getitem__(self, index):
-        idx, cont = self.indices[index]
+        idx, cont, _ = self.indices[index]
         img, details = self.dataset[idx]
         objects = details["annotation"]["object"]
         n = 0
