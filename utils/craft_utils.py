@@ -53,11 +53,12 @@ def calculate_craft_for_class(
     """
     image_indices = get_class_predictions_indices(
         dataset, model, class_to_explain, device
-    )
+    ).to(device)
 
     class_images = torch.tensor([]).to(device)
     for i in image_indices:
         x, _ = dataset[i]
+        x = x.to(device)
         class_images = torch.cat((class_images, x.unsqueeze(0)), dim=0)
 
     print(f"class_images.shape={class_images.shape}")
