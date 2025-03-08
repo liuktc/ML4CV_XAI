@@ -1,6 +1,8 @@
 import torch.nn as nn
 from collections import OrderedDict
 import torch
+import numpy as np
+from tqdm.auto import tqdm
 
 
 def cut_model_from_layer(
@@ -211,3 +213,46 @@ def min_max_normalize(x: torch.Tensor) -> torch.Tensor:
     # Normalize the input tensor to the range [0,1]
     # It works along the last 2 dimensions
     return (x - x.amin((2, 3), True)) / (x.amax((2, 3), True) - x.amin((2, 3), True))
+
+
+def calculate_erf(model, input, device):
+    # input_tensor = torch.tensor(input, device=device, requires_grad=True)
+    input_tensor = input.clone().detach().requires_grad_(True).to(device)
+    model.eval()
+    output = model(input_tensor)
+
+    input_shape = input_tensor.shape
+    result = np.zeros(
+        (
+            output.shape[2],
+            output.shape[3],
+            input_shape[1],
+            input_shape[2],
+            input_shape[3],
+        )
+    )
+    for x in tqdm(range(output.shape[2])):
+        for y in range(output.shape[3]):
+            input_tensor = input.clone().detach().requires_grad_(True).to(device)
+            # Set the model to evaluation mode
+            model.eval()
+
+            # Forward pass: compute the output tensor
+            output = model(input_tensor)
+            # Initialize the output gradient as zero everywhere and 1 at a specific location
+            grad_output = torch.zeros_like(output)
+
+            grad_output[0, :, x, y] = 1  # Target a specific output unit
+
+            # Backward pass: compute gradient of the output with respect to the input image
+            output.backward(grad_output, retain_graph=True)
+
+            # Retrieve the gradient of the input
+            grad_input = input_tensor.grad.data[0].cpu().numpy()
+            grad_input = np.abs(grad_input)  # Get the absolute values of the gradients
+            grad_input = grad_input / np.max(grad_input)  # Normalize the gradients
+
+            # Save the gradient of the input
+            result[x, y] = grad_input
+
+    return result

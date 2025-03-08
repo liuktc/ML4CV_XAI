@@ -4,6 +4,11 @@ from typing_extensions import Literal
 import torch
 from tqdm.auto import tqdm
 import os
+import cv2
+import numpy as np
+from .util import draw_random_shapes
+import matplotlib.pyplot as plt
+from PIL import Image
 
 FROM_LABEL_TO_IDX = {
     "aeroplane": 0,
@@ -100,3 +105,81 @@ class PascalVOC2007(Dataset):
                 label = torch.Tensor([label]).long().reshape(-1)
 
                 return img_obj, label
+
+
+class SynteticFigures(Dataset):
+    def __init__(
+        self,
+        background_path,
+        num_shapes_per_image=10,
+        size_range=(20, 100),
+        num_images=1000,
+        split="train",
+        image_transform=None,
+        background_transform=None,
+    ):
+        super().__init__()
+        self.background_path = background_path
+        self.image_transform = image_transform
+        self.background_transform = background_transform
+        self.num_shapes_per_image = num_shapes_per_image
+        self.size_range = size_range
+        self.num_images = num_images
+        self.initial_seed = hash(split) % 2**32
+
+        # Read all the images in the background path
+        self.background_images = []
+        for root, _, files in os.walk(background_path):
+            for file in files:
+                if file.endswith(".jpg"):
+                    self.background_images.append(os.path.join(root, file))
+
+    def __len__(self):
+        return self.num_images
+
+    def __getitem__(self, index):
+        seed = self.initial_seed + index
+
+        if index >= self.num_images:
+            raise IndexError("Index out of bounds")
+
+        background = cv2.imread(
+            self.background_images[index % len(self.background_images)]
+        )
+        background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
+
+        background = torch.Tensor(background).type(torch.uint8).permute(2, 0, 1)
+        ###############################################
+        background = torch.zeros_like(background)
+        ###############################################
+
+        if self.background_transform:
+            background = self.background_transform(background)
+
+        # Set the background back to numpy array
+        background = background.permute(1, 2, 0).numpy().astype(np.int16)
+
+        # Seed the random generator with the index
+        np.random.seed(seed)
+
+        label = np.random.randint(0, 3)
+
+        img = draw_random_shapes(
+            background,
+            shape_type=label,
+            num_shapes=self.num_shapes_per_image,
+            size_range=self.size_range,
+            seed=seed,
+        )
+
+        img = img.astype(np.uint8)
+        # img = np.transpose(img, (2, 0, 1))
+
+        # print(img.shape, img.dtype)
+        img = Image.fromarray(img)
+        # print(img.size)
+
+        if self.image_transform:
+            img = self.image_transform(img)
+
+        return img, label

@@ -1,7 +1,12 @@
 import torch
 import torch.nn as nn
 from captum.attr import DeepLiftShap
-from .util import cut_model_to_layer, cut_model_from_layer, min_max_normalize
+from .util import (
+    cut_model_to_layer,
+    cut_model_from_layer,
+    min_max_normalize,
+    calculate_erf,
+)
 from pytorch_grad_cam import GradCAMPlusPlus
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from typing import List
@@ -32,6 +37,50 @@ class AttributionMethod:
         baseline_dist: torch.Tensor = None,
     ):
         raise NotImplementedError()
+
+
+class SimpleUpsampling(nn.Module):
+    def __init__(self, size, mode="bilinear"):
+        super().__init__()
+        self.size = size
+        self.mode = mode
+        self.up = nn.Upsample(size=self.size, mode=self.mode)
+
+    def forward(self, attribution, _):
+        return self.up(attribution)
+
+
+class ERFUpsampling(nn.Module):
+    """
+    Upsampling using effective receptive field (ERF) upsampling.
+    """
+
+    def __init__(self, model, device="cpu"):
+        super().__init__()
+        self.model = model
+        self.device = device
+
+    def forward(self, attribution: torch.Tensor, image):
+        erf = calculate_erf(self.model, image, device=self.device)
+
+        # Rescale the attribution map using the ERF values
+        result = np.zeros(erf.shape[2:], dtype=np.float32)
+        attribution = attribution[0][0].detach().cpu().numpy()
+        attribution = attribution.astype(np.float32)
+
+        # print(f"erf.shape:{erf.shape}")
+        # print(f"attribution.shape:{attribution.shape}")
+        # print(f"result.shape:{result.shape}")
+        # print(f"image.shape:{image.shape}")
+
+        for i in range(erf.shape[0]):
+            for j in range(erf.shape[1]):
+                result += attribution[i, j] * erf[i, j]
+
+        # Sum over channels
+        result = result.sum(axis=0, keepdims=True)
+
+        return torch.Tensor(result).unsqueeze(0)
 
 
 class _DeepLiftShap(AttributionMethod):
@@ -74,7 +123,7 @@ class _GradCAMPlusPlus(AttributionMethod):
         self.model = model
         self.target_layer = target_layer
 
-        self.cam = GradCAMPlusPlus(model=model, target_layers=[target_layer])
+        self.cam = GradCAMPlusPlusNoResize(model=model, target_layers=[target_layer])
 
     def attribute(
         self,

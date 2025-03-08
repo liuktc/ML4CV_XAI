@@ -1,0 +1,5 @@
+Model,Attribution Method,Layer,Metric,Upscale Method,Value
+VGG11,_DeepLiftShap,features.20,avg_drop,ERFUpsampling,62.6367347240448
+VGG11,_DeepLiftShap,features.20,increase,ERFUpsampling,0.0
+VGG11,_DeepLiftShap,features.20,insertion_curve_AUC,ERFUpsampling,0.6757771149277687
+VGG11,_DeepLiftShap,features.20,deletion_curve_AUC,ERFUpsampling,0.3089142304379493

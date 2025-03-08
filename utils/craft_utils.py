@@ -37,7 +37,9 @@ def get_class_predictions_indices(
 
 
 def calculate_craft_for_class(
-    craft: Craft, model: nn.Module, dataset: Dataset, class_to_explain: int, device: str
+    craft: Craft,
+    images: torch.Tensor,
+    class_to_explain: int,
 ):
     """Uses CRAFT to calculate the crops, crops_u, w, importances and images_u for a given class.
 
@@ -51,30 +53,44 @@ def calculate_craft_for_class(
     Returns:
         Tuple: crops, crops_u, w, importances, images_u
     """
-    image_indices = get_class_predictions_indices(
-        dataset, model, class_to_explain, device
-    ).to(device)
+    # image_indices = get_class_predictions_indices(
+    #     dataset, model, class_to_explain, device
+    # ).to(device)
 
-    class_images = torch.tensor([]).to(device)
-    for i in image_indices:
-        x, _ = dataset[i]
-        x = x.to(device)
-        class_images = torch.cat((class_images, x.unsqueeze(0)), dim=0)
+    # class_images = torch.tensor([]).to(device)
+    # for i in image_indices:
+    #     x, _ = dataset[i]
+    #     x = x.to(device)
+    #     class_images = torch.cat((class_images, x.unsqueeze(0)), dim=0)
 
-    print(f"class_images.shape={class_images.shape}")
+    # print(f"class_images.shape={class_images.shape}")
 
     # CRAFT will (1) create the patches, (2) find the concept
     # and (3) return the crops (crops), the embedding of the crops (crops_u), and the concept bank (w)
-    crops, crops_u, w = craft.fit(class_images)
+    crops, crops_u, w = craft.fit(images)
     crops = np.moveaxis(torch_to_numpy(crops), 1, -1)
 
     print(
         f"crops.shape={crops.shape}, crops_u.shape={crops_u.shape}, w.shape={w.shape}"
     )
 
-    importances = craft.estimate_importance(class_images, class_id=class_to_explain)
-    images_u = craft.transform(class_images)
+    importances = craft.estimate_importance(images, class_id=class_to_explain)
+    images_u = craft.transform(images)
 
     print(f"images_u.shape={images_u.shape}")
 
     return crops, crops_u, w, importances, images_u
+
+
+def split_vgg(model: nn.Module):
+    g = nn.Sequential(*list(model.children())[:-1])
+    h = lambda x: model.classifier(torch.flatten(x, 1))
+
+    return g, h
+
+
+def split_resnet(model: nn.Module):
+    g = nn.Sequential(*list(model.children())[:-1])
+    h = lambda x: model.fc(x)
+
+    return g, h
