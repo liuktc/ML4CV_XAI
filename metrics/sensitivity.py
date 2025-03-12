@@ -36,13 +36,21 @@ class Sensitivity(BaseMetric):
                 batch = images[i : i + BATCH_SIZE].requires_grad_().to(device)
                 # Repeat targets
                 batch_targets = torch.repeat_interleave(targets, BATCH_SIZE, dim=0)
-                res.append(
+                attribution_res = (
                     attribution_method.attribute(
                         batch, model, layer, batch_targets, baseline_dist
                     )
                     .detach()
                     .cpu()
                 )
+
+                # If any of the attributions is NaN, skip the batch
+                if torch.isnan(attribution_res).any():
+                    print("A saliency map is NaN, skipping batch")
+                    del batch, batch_targets, attribution_res
+                    torch.cuda.empty_cache()
+                    continue
+                res.append(attribution_res)
 
             res = torch.cat(res, dim=0)
 
