@@ -30,6 +30,7 @@ class Sensitivity(BaseMetric):
                 images = images[0]
 
             BATCH_SIZE = 2
+            FINAL_SIZE = 10
 
             res = []
             for i in range(0, len(images), BATCH_SIZE):
@@ -51,6 +52,10 @@ class Sensitivity(BaseMetric):
                     torch.cuda.empty_cache()
                     continue
                 res.append(attribution_res)
+
+            if len(res) != FINAL_SIZE:
+                remaining = FINAL_SIZE - len(res)
+                res += [res[-1]] * remaining
 
             res = torch.cat(res, dim=0)
 
