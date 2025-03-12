@@ -142,7 +142,7 @@ def calculate_metrics(
                 if type(metric_res) is torch.Tensor:
                     metric_res = metric_res.detach().cpu()
 
-                res[layer_names[layer]][metric.name].append(res)
+                res[layer_names[layer]][metric.name].append(metric_res)
 
                 if debug:
                     print_memory_usage()
