@@ -50,4 +50,4 @@ class Sensitivity(BaseMetric):
         if return_mean:
             sens = torch.mean(sens)
 
-        return sens
+        return sens.detach().cpu()
