@@ -7,8 +7,10 @@ from utils import AttributionMethod
 
 
 # define a perturbation function for the input
-def perturb_fn(inputs):
-    noise = torch.tensor(np.random.normal(0, 0.003, inputs.shape)).float()
+def perturb_fn(inputs: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+    noise = torch.tensor(
+        np.random.normal(0, 0.003, inputs.shape), device=inputs.device
+    ).float()
     return noise, inputs - noise
 
 
