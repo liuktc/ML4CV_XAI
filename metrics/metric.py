@@ -128,18 +128,21 @@ def calculate_metrics(
 
             # Calculate all the metrics
             for metric in metrics:
-                res[layer_names[layer]][metric.name].append(
-                    metric(
-                        model=model,
-                        test_images=images,
-                        saliency_maps=saliency_maps,
-                        class_idx=labels,
-                        attribution_method=attribute_method,
-                        device=device,
-                        baseline_dist=baseline_dist,
-                        layer=layer,
-                    )
+                metric_res = metric(
+                    model=model,
+                    test_images=images,
+                    saliency_maps=saliency_maps,
+                    class_idx=labels,
+                    attribution_method=attribute_method,
+                    device=device,
+                    baseline_dist=baseline_dist,
+                    layer=layer,
                 )
+
+                if type(metric_res) is torch.Tensor:
+                    metric_res = metric_res.detach().cpu()
+
+                res[layer_names[layer]][metric.name].append(res)
 
                 if debug:
                     print_memory_usage()
