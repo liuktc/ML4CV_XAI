@@ -30,8 +30,8 @@ class AttributionMethod:
 
     def attribute(
         self,
-        model: nn.Module,
         input_tensor: torch.Tensor,
+        model: nn.Module,
         layer: str | nn.Module,
         target: torch.Tensor,
         baseline_dist: torch.Tensor = None,
@@ -68,11 +68,6 @@ class ERFUpsampling(nn.Module):
         attribution = attribution[0][0].detach().cpu().numpy()
         attribution = attribution.astype(np.float32)
 
-        # print(f"erf.shape:{erf.shape}")
-        # print(f"attribution.shape:{attribution.shape}")
-        # print(f"result.shape:{result.shape}")
-        # print(f"image.shape:{image.shape}")
-
         for i in range(erf.shape[0]):
             for j in range(erf.shape[1]):
                 result += attribution[i, j] * erf[i, j]
@@ -86,8 +81,8 @@ class ERFUpsampling(nn.Module):
 class _DeepLiftShap(AttributionMethod):
     def attribute(
         self,
-        model: nn.Module,
         input_tensor: torch.Tensor,
+        model: nn.Module,
         layer: str | nn.Module,
         target: torch.Tensor,
         baseline_dist: torch.Tensor = None,
@@ -127,8 +122,8 @@ class _GradCAMPlusPlus(AttributionMethod):
 
     def attribute(
         self,
-        model: nn.Module,
         input_tensor: torch.Tensor,
+        model: nn.Module,
         layer: str | nn.Module,
         target: torch.Tensor,
         baseline_dist: torch.Tensor = None,

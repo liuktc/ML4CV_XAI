@@ -1,4 +1,24 @@
 import torch
+import torch.nn as nn
+
+
+# Base class for all the metrics to extend
+class BaseMetric:
+    def __init__(self, name: str):
+        self.name = name
+        pass
+
+    def __call__(
+        self,
+        model: nn.Module,
+        test_images: torch.Tensor,
+        saliency_maps: torch.Tensor,
+        class_idx: int | torch.Tensor,
+        device: torch.device | str = "cpu",
+        apply_softmax: bool = True,
+        return_mean: bool = True,
+    ) -> torch.Tensor:
+        raise NotImplementedError
 
 
 def mix_image_and_saliency(

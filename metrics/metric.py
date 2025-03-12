@@ -13,10 +13,12 @@ from utils.attributions import AttributionMethod
 from results import ResultMetrics
 from utils import get_layer_name, scale_saliencies
 
-from .average_drop import average_drop
-from .increase_in_confidence import increase_in_confidence
-from .insertion_curve import insertion_curve_AUC
-from .deletion_curve import deletion_curve_AUC
+from .average_drop import AverageDrop
+from .increase_in_confidence import IncreaseInConfidence
+from .insertion_curve import InsertionCurveAUC
+from .deletion_curve import DeletionCurveAUC
+from .utils import BaseMetric
+
 
 import psutil
 import os
@@ -35,6 +37,7 @@ def calculate_metrics(
     test_dl: DataLoader,
     train_dl: DataLoader,
     layers: List[nn.Module],
+    metrics: List[BaseMetric],
     result_metrics: ResultMetrics,
     upsample: nn.Module,
     device: torch.device | str = "cpu",
@@ -59,12 +62,14 @@ def calculate_metrics(
     Returns:
         dict: Dictionary containing the results of the metrics for each layer
     """
-    METRICS = ["avg_drop", "increase", "insertion_curve_AUC", "deletion_curve_AUC"]
+    # METRICS = ["avg_drop", "increase", "insertion_curve_AUC", "deletion_curve_AUC"]
     if model_name is None:
         model_name = model.__class__.__name__
     layer_names = {layer: get_layer_name(model, layer) for layer in layers}
 
-    res = {layer_names[layer]: {metric: [] for metric in METRICS} for layer in layers}
+    res = {
+        layer_names[layer]: {metric.name: [] for metric in metrics} for layer in layers
+    }
 
     # Use the train_dl as baseline distribution
     baseline_dist = torch.cat([images for images, _ in train_dl]).to(device)
@@ -79,8 +84,8 @@ def calculate_metrics(
             images = images.to(device)
 
             attributions = attribute_method.attribute(
-                model,
                 input_tensor=images,
+                model=model,
                 layer=layer,
                 target=labels,
                 baseline_dist=baseline_dist,
@@ -121,82 +126,102 @@ def calculate_metrics(
             if debug:
                 print_memory_usage()
 
-            avg_drop = (
-                (
-                    average_drop(model, images, saliency_maps, labels, device)
-                    .detach()
-                    .cpu()
+            # Calculate all the metrics
+            for metric in metrics:
+                res[layer_names[layer]][metric.name].append(
+                    metric(
+                        model=model,
+                        test_images=images,
+                        saliency_maps=saliency_maps,
+                        class_idx=labels,
+                        attribution_method=attribute_method,
+                        device=device,
+                        baseline_dist=baseline_dist,
+                        layer=layer,
+                    )
                 )
-                .mean()
-                .item()
-            )
 
-            if debug:
-                print_memory_usage()
+                if debug:
+                    print_memory_usage()
 
-            increase = (
-                (
-                    increase_in_confidence(model, images, saliency_maps, labels, device)
-                    .detach()
-                    .cpu()
-                )
-                .mean()
-                .item()
-            )
+            # avg_drop = (
+            #     (
+            #         average_drop(model, images, saliency_maps, labels, device)
+            #         .detach()
+            #         .cpu()
+            #     )
+            #     .mean()
+            #     .item()
+            # )
 
-            if debug:
-                print_memory_usage()
+            # if debug:
+            #     print_memory_usage()
 
-            insertion_curve_AUC_score = (
-                (
-                    insertion_curve_AUC(model, images, saliency_maps, labels, device)
-                    .detach()
-                    .cpu()
-                )
-                .mean()
-                .item()
-            )
+            # increase = (
+            #     (
+            #         increase_in_confidence(model, images, saliency_maps, labels, device)
+            #         .detach()
+            #         .cpu()
+            #     )
+            #     .mean()
+            #     .item()
+            # )
 
-            if debug:
-                print_memory_usage()
+            # if debug:
+            #     print_memory_usage()
 
-            deletion_curve_AUC_score = (
-                (
-                    deletion_curve_AUC(model, images, saliency_maps, labels, device)
-                    .detach()
-                    .cpu()
-                )
-                .mean()
-                .item()
-            )
+            # insertion_curve_AUC_score = (
+            #     (
+            #         insertion_curve_AUC(model, images, saliency_maps, labels, device)
+            #         .detach()
+            #         .cpu()
+            #     )
+            #     .mean()
+            #     .item()
+            # )
 
-            if debug:
-                print_memory_usage()
+            # if debug:
+            #     print_memory_usage()
 
-            res[layer_names[layer]]["avg_drop"].append(avg_drop)
-            res[layer_names[layer]]["increase"].append(increase)
-            res[layer_names[layer]]["insertion_curve_AUC"].append(
-                insertion_curve_AUC_score
-            )
-            res[layer_names[layer]]["deletion_curve_AUC"].append(
-                deletion_curve_AUC_score
-            )
+            # deletion_curve_AUC_score = (
+            #     (
+            #         deletion_curve_AUC(model, images, saliency_maps, labels, device)
+            #         .detach()
+            #         .cpu()
+            #     )
+            #     .mean()
+            #     .item()
+            # )
+
+            # if debug:
+            #     print_memory_usage()
+
+            # res[layer_names[layer]]["avg_drop"].append(avg_drop)
+            # res[layer_names[layer]]["increase"].append(increase)
+            # res[layer_names[layer]]["insertion_curve_AUC"].append(
+            #     insertion_curve_AUC_score
+            # )
+            # res[layer_names[layer]]["deletion_curve_AUC"].append(
+            #     deletion_curve_AUC_score
+            # )
 
             # **Explicitly delete tensors and clear cache**
             del images, labels, attributions, saliency_maps
             torch.cuda.empty_cache()
             # del avg_drop, increase, insertion_curve_AUC_score, deletion_curve_AUC_score
 
-        for metric in METRICS:
-            res[layer_names[layer]][metric] = np.mean(res[layer_names[layer]][metric])
+        for metric in metrics:
+            res[layer_names[layer]][metric.name] = np.mean(
+                res[layer_names[layer]][metric.name]
+            )
 
             result_metrics.add_result(
                 model_name,
                 attribute_method.__class__.__name__,
                 layer_names[layer],
-                metric,
+                metric.name,
                 upsample.__class__.__name__,
-                res[layer_names[layer]][metric],
+                res[layer_names[layer]][metric.name],
             )
 
     return res

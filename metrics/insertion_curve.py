@@ -2,6 +2,39 @@ import torch
 import torch.nn as nn
 from torchvision.transforms.functional import gaussian_blur
 from torcheval.metrics.aggregation.auc import AUC
+from .utils import BaseMetric
+from utils import AttributionMethod
+
+
+class InsertionCurveAUC(BaseMetric):
+    def __init__(self):
+        super().__init__("insertion_curve_AUC")
+
+    def __call__(
+        self,
+        model: nn.Module,
+        images: torch.Tensor,
+        saliency_maps: torch.Tensor,
+        labels: torch.Tensor,
+        attribution_method: AttributionMethod,
+        device: torch.device | str = "cpu",
+        apply_softmax: bool = True,
+        return_mean: bool = True,
+        **kwargs,
+    ):
+        B, C, H, W = images.shape
+        ins_range, insertion = insertion_curve(
+            model, images, saliency_maps, labels, device, apply_softmax
+        )
+        res = torch.zeros(B)
+        for i in range(B):
+            insertion_auc = AUC()
+            insertion_auc.update(ins_range[i], insertion[i])
+            res[i] = insertion_auc.compute()
+
+        if return_mean:
+            res = res.mean()
+        return res.item()
 
 
 def insertion_curve(
@@ -78,24 +111,3 @@ def insertion_curve(
         insertion_values[b] = res
 
     return insertion_ranges, insertion_values
-
-
-def insertion_curve_AUC(
-    model: nn.Module,
-    images: torch.Tensor,
-    saliency_maps: torch.Tensor,
-    labels: torch.Tensor,
-    device: torch.device | str = "cpu",
-    apply_softmax: bool = True,
-):
-    B, C, H, W = images.shape
-    ins_range, insertion = insertion_curve(
-        model, images, saliency_maps, labels, device, apply_softmax
-    )
-    res = torch.zeros(B)
-    for i in range(B):
-        insertion_auc = AUC()
-        insertion_auc.update(ins_range[i], insertion[i])
-        res[i] = insertion_auc.compute()
-
-    return res

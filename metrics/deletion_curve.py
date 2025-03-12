@@ -1,6 +1,39 @@
 import torch
 import torch.nn as nn
 from torcheval.metrics.aggregation.auc import AUC
+from .utils import BaseMetric
+from utils import AttributionMethod
+
+
+class DeletionCurveAUC(BaseMetric):
+    def __init__(self):
+        super().__init__("deletion_curve_AUC")
+
+    def __call__(
+        self,
+        model: nn.Module,
+        images: torch.Tensor,
+        saliency_maps: torch.Tensor,
+        labels: torch.Tensor,
+        attribution_method: AttributionMethod,
+        device: torch.device | str = "cpu",
+        apply_softmax: bool = True,
+        return_mean: bool = True,
+        **kwargs,
+    ):
+        B, C, H, W = images.shape
+        ins_range, insertion = deletion_curve(
+            model, images, saliency_maps, labels, device, apply_softmax
+        )
+        res = torch.zeros(B)
+        for i in range(B):
+            insertion_auc = AUC()
+            insertion_auc.update(ins_range[i], insertion[i])
+            res[i] = insertion_auc.compute()
+
+        if return_mean:
+            res = res.mean()
+        return res.item()
 
 
 def deletion_curve(
@@ -67,24 +100,3 @@ def deletion_curve(
         deletion_values[b] = res
 
     return deletion_ranges, deletion_values
-
-
-def deletion_curve_AUC(
-    model: nn.Module,
-    images: torch.Tensor,
-    saliency_maps: torch.Tensor,
-    labels: torch.Tensor,
-    device: torch.device | str = "cpu",
-    apply_softmax: bool = True,
-):
-    B, C, H, W = images.shape
-    ins_range, insertion = deletion_curve(
-        model, images, saliency_maps, labels, device, apply_softmax
-    )
-    res = torch.zeros(B)
-    for i in range(B):
-        insertion_auc = AUC()
-        insertion_auc.update(ins_range[i], insertion[i])
-        res[i] = insertion_auc.compute()
-
-    return res
