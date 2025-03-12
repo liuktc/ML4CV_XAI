@@ -27,7 +27,7 @@ class RoadCombined(BaseMetric):
         if len(saliency_maps.shape) == 4:
             saliency_maps = saliency_maps.squeeze(1)
 
-        saliency_maps = saliency_maps.detach().numpy()
+        saliency_maps = saliency_maps.detach().cpu().numpy()
         scores = road_combined(test_images, saliency_maps, targets, model)
 
         if return_mean:
