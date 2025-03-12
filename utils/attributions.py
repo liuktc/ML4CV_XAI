@@ -129,19 +129,22 @@ class _GradCAMPlusPlus(AttributionMethod):
         baseline_dist: torch.Tensor = None,
         normalize: bool = True,
     ):
-        targets = [ClassifierOutputTarget(t) for t in target]
+        with torch.enable_grad():
+            targets = [ClassifierOutputTarget(t) for t in target]
 
-        # Compute GradCAM
-        grayscale_cam = self.cam(input_tensor=input_tensor, targets=targets)
+            # Compute GradCAM
+            grayscale_cam = self.cam(input_tensor=input_tensor, targets=targets)
 
-        # Convert to tensor efficiently and move to same device as input
-        grayscale_cam_tensor = torch.from_numpy(grayscale_cam).to(input_tensor.device)
-        grayscale_cam_tensor = grayscale_cam_tensor.unsqueeze(1)
+            # Convert to tensor efficiently and move to same device as input
+            grayscale_cam_tensor = torch.from_numpy(grayscale_cam).to(
+                input_tensor.device
+            )
+            grayscale_cam_tensor = grayscale_cam_tensor.unsqueeze(1)
 
-        if normalize:
-            grayscale_cam_tensor = min_max_normalize(grayscale_cam_tensor)
+            if normalize:
+                grayscale_cam_tensor = min_max_normalize(grayscale_cam_tensor)
 
-        return grayscale_cam_tensor
+            return grayscale_cam_tensor
 
 
 class GradCAMPlusPlusNoResize(GradCAMPlusPlus):
