@@ -30,7 +30,7 @@ class Sensitivity(BaseMetric):
                 images = images[0]
 
             BATCH_SIZE = 2
-            FINAL_SIZE = 10
+            FINAL_SIZE = 10 // BATCH_SIZE
 
             res = []
             for i in range(0, len(images), BATCH_SIZE):
