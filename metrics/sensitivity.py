@@ -28,10 +28,19 @@ class Sensitivity(BaseMetric):
             if type(images) is tuple and len(images) == 1:
                 images = images[0]
 
-            print(images.shape)
-            return attribution_method.attribute(
-                images, model, layer, targets, baseline_dist
-            ).detach()
+            BATCH_SIZE = 2
+
+            res = []
+            for i in range(0, len(images), BATCH_SIZE):
+                batch = images[i : i + BATCH_SIZE]
+                print(batch.shape)
+                res.append(
+                    attribution_method.attribute(
+                        batch, model, layer, targets, baseline_dist
+                    ).detach()
+                )
+
+            return torch.cat(res, dim=0)
 
         # Set the **kwargs to contain model, layer, targets, baseline_dist
         kwargs["model"] = model
