@@ -24,7 +24,9 @@ class Sensitivity(BaseMetric):
     ) -> torch.Tensor:
         # **kwargs needs to contain baseline_dist and layer
 
-        def attribution_wrapper(images, model, layer, targets, baseline_dist):
+        def attribution_wrapper(
+            images: torch.Tensor, model, layer, targets, baseline_dist
+        ):
             if type(images) is tuple and len(images) == 1:
                 images = images[0]
 
@@ -32,7 +34,7 @@ class Sensitivity(BaseMetric):
 
             res = []
             for i in range(0, len(images), BATCH_SIZE):
-                batch = images[i : i + BATCH_SIZE]
+                batch = images[i : i + BATCH_SIZE].requires_grad_().to(device)
                 print(batch.shape)
                 res.append(
                     attribution_method.attribute(
