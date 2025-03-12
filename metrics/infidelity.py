@@ -38,4 +38,4 @@ class Infidelity(BaseMetric):
         if return_mean:
             res = res.mean()
 
-        return res
+        return res.detach().cpu()

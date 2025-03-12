@@ -33,4 +33,4 @@ class RoadCombined(BaseMetric):
         if return_mean:
             scores = scores.mean()
 
-        return scores.detach().cpu()
+        return scores
