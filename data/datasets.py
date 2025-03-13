@@ -117,11 +117,13 @@ class SynteticFigures(Dataset):
         split="train",
         image_transform=None,
         background_transform=None,
+        mask_preprocess=None,
     ):
         super().__init__()
         self.background_path = background_path
         self.image_transform = image_transform
         self.background_transform = background_transform
+        self.mask_preprocess = mask_preprocess
         self.num_shapes_per_image = num_shapes_per_image
         self.size_range = size_range
         self.num_images = num_images
@@ -150,7 +152,7 @@ class SynteticFigures(Dataset):
 
         background = torch.Tensor(background).type(torch.uint8).permute(2, 0, 1)
         ###############################################
-        background = torch.zeros_like(background)
+        # background = torch.zeros_like(background)
         ###############################################
 
         if self.background_transform:
@@ -164,7 +166,7 @@ class SynteticFigures(Dataset):
 
         label = np.random.randint(0, 3)
 
-        img = draw_random_shapes(
+        img, mask = draw_random_shapes(
             background,
             shape_type=label,
             num_shapes=self.num_shapes_per_image,
@@ -173,13 +175,16 @@ class SynteticFigures(Dataset):
         )
 
         img = img.astype(np.uint8)
+        mask = mask.astype(np.uint8)
         # img = np.transpose(img, (2, 0, 1))
 
-        # print(img.shape, img.dtype)
         img = Image.fromarray(img)
-        # print(img.size)
+        mask = Image.fromarray(mask)
 
         if self.image_transform:
             img = self.image_transform(img)
 
-        return img, label
+        if self.mask_preprocess:
+            mask = self.mask_preprocess(mask)
+
+        return img, mask, label

@@ -5,8 +5,25 @@ import cv2
 def draw_random_shapes(
     image, shape_type: int, num_shapes=5, size_range=(20, 100), seed: int = 0
 ):
+    if shape_type == 0:
+        shape_types = (
+            [shape_type] * num_shapes + [1] * (num_shapes - 1) + [2] * (num_shapes - 1)
+        )
+    elif shape_type == 1:
+        shape_types = (
+            [shape_type] * num_shapes + [0] * (num_shapes - 1) + [2] * (num_shapes - 1)
+        )
+    elif shape_type == 2:
+        shape_types = (
+            [shape_type] * num_shapes + [0] * (num_shapes - 1) + [1] * (num_shapes - 1)
+        )
+    else:
+        raise ValueError("Invalid shape type")
+
+    num_shapes = num_shapes + (num_shapes - 1) + (num_shapes - 1)
     # Make a copy of the image to avoid modifying the original
     result = image.copy()
+    mask = np.zeros_like(result)
     height, width = image.shape[:2]
 
     # Generate all random numbers at once using numpy
@@ -20,15 +37,17 @@ def draw_random_shapes(
     # Generate random angles between 0 and 360 degrees
     angles = np.random.uniform(0, 360, size=num_shapes)
     for i in range(num_shapes):
+        shape = shape_types[i]
         color = tuple(map(int, colors[i]))  # Convert to tuple for OpenCV
         x = positions_x[i]
         y = positions_y[i]
         size = sizes[i]
         angle = angles[i]
-        if shape_type == 0:  # Circle
+        if shape == 0:  # Circle
             # Circles look the same when rotated
             cv2.circle(result, (x, y), size // 2, color, -1)
-        elif shape_type == 1:  # Square
+            cv2.circle(mask, (x, y), size // 2, (255, 255, 255), -1)
+        elif shape == 1:  # Square
             # Create square points
             half_size = size // 2
             square_pts = np.array(
@@ -50,6 +69,7 @@ def draw_random_shapes(
             rotated_pts = rotated_pts + [x, y]
             # Draw rotated square
             cv2.fillPoly(result, [rotated_pts.astype(np.int32)], color)
+            cv2.fillPoly(mask, [rotated_pts.astype(np.int32)], (255, 255, 255))
         else:  # Triangle
             # Create triangle points
             half_size = size // 2
@@ -67,5 +87,9 @@ def draw_random_shapes(
             rotated_pts = rotated_pts + [x, y]
             # Draw rotated triangle
             cv2.fillPoly(result, [rotated_pts.astype(np.int32)], color)
+            cv2.fillPoly(mask, [rotated_pts.astype(np.int32)], (255, 255, 255))
 
-    return result
+    # Make the mask binary
+    mask[mask > 0] = 255
+
+    return result, mask
