@@ -118,6 +118,7 @@ class SynteticFigures(Dataset):
         image_transform=None,
         background_transform=None,
         mask_preprocess=None,
+        num_other_shapes=0,
     ):
         super().__init__()
         self.background_path = background_path
@@ -127,6 +128,7 @@ class SynteticFigures(Dataset):
         self.num_shapes_per_image = num_shapes_per_image
         self.size_range = size_range
         self.num_images = num_images
+        self.num_other_shapes = num_other_shapes
         self.initial_seed = hash(split) % 2**32
 
         # Read all the images in the background path
@@ -141,6 +143,9 @@ class SynteticFigures(Dataset):
 
     def __getitem__(self, index):
         seed = self.initial_seed + index
+        # Seed the random generator with the index
+        np.random.seed(seed)
+        torch.manual_seed(seed)
 
         if index >= self.num_images:
             raise IndexError("Index out of bounds")
@@ -161,9 +166,6 @@ class SynteticFigures(Dataset):
         # Set the background back to numpy array
         background = background.permute(1, 2, 0).numpy().astype(np.int16)
 
-        # Seed the random generator with the index
-        np.random.seed(seed)
-
         label = np.random.randint(0, 3)
 
         img, mask = draw_random_shapes(
@@ -172,6 +174,7 @@ class SynteticFigures(Dataset):
             num_shapes=self.num_shapes_per_image,
             size_range=self.size_range,
             seed=seed,
+            num_other_shapes=self.num_other_shapes,
         )
 
         img = img.astype(np.uint8)

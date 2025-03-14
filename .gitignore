@@ -2,6 +2,7 @@ mnist_data
 __pycache__
 *.pyc
 *.pt
+*.pth
 
 data/VOCdevkit/*
 *.tar

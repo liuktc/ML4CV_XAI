@@ -55,16 +55,18 @@ class ERFUpsampling(nn.Module):
     Upsampling using effective receptive field (ERF) upsampling.
     """
 
-    def __init__(self, model, device="cpu"):
+    def __init__(self, model, layer: nn.Module, device="cpu"):
         super().__init__()
-        self.model = model
+        # self.model = model
         self.device = device
+        self.model = cut_model_to_layer(model, layer, included=True)
 
     def forward(self, attribution: torch.Tensor, image):
         erf = calculate_erf(self.model, image, device=self.device)
 
         # Rescale the attribution map using the ERF values
         result = np.zeros(erf.shape[2:], dtype=np.float32)
+        assert attribution.shape[0] == 1 and attribution.shape[1] == 1
         attribution = attribution[0][0].detach().cpu().numpy()
         attribution = attribution.astype(np.float32)
 

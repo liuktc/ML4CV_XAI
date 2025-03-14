@@ -53,6 +53,9 @@ class Sensitivity(BaseMetric):
                     continue
                 res.append(attribution_res)
 
+            if len(res) == 0:
+                return None
+
             if len(res) != FINAL_SIZE:
                 remaining = FINAL_SIZE - len(res)
                 res += [res[-1]] * remaining

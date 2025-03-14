@@ -3,24 +3,29 @@ import cv2
 
 
 def draw_random_shapes(
-    image, shape_type: int, num_shapes=5, size_range=(20, 100), seed: int = 0
+    image,
+    shape_type: int,
+    num_shapes=5,
+    size_range=(20, 100),
+    seed: int = 0,
+    num_other_shapes=0,
 ):
     if shape_type == 0:
         shape_types = (
-            [shape_type] * num_shapes + [1] * (num_shapes - 1) + [2] * (num_shapes - 1)
+            [shape_type] * num_shapes + [1] * num_other_shapes + [2] * num_other_shapes
         )
     elif shape_type == 1:
         shape_types = (
-            [shape_type] * num_shapes + [0] * (num_shapes - 1) + [2] * (num_shapes - 1)
+            [shape_type] * num_shapes + [0] * num_other_shapes + [2] * num_other_shapes
         )
     elif shape_type == 2:
         shape_types = (
-            [shape_type] * num_shapes + [0] * (num_shapes - 1) + [1] * (num_shapes - 1)
+            [shape_type] * num_shapes + [0] * num_other_shapes + [1] * num_other_shapes
         )
     else:
         raise ValueError("Invalid shape type")
 
-    num_shapes = num_shapes + (num_shapes - 1) + (num_shapes - 1)
+    num_shapes = num_shapes + num_other_shapes + num_other_shapes
     # Make a copy of the image to avoid modifying the original
     result = image.copy()
     mask = np.zeros_like(result)

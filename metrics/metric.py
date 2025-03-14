@@ -139,6 +139,10 @@ def calculate_metrics(
                     layer=layer,
                 )
 
+                if metric_res is None:
+                    print(f"Metric {metric.name} is None")
+                    continue
+
                 if type(metric_res) is torch.Tensor:
                     metric_res = metric_res.detach().cpu()
 
