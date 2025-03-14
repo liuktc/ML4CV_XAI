@@ -143,6 +143,10 @@ def calculate_metrics(
                     print(f"Metric {metric.name} is None")
                     continue
 
+                if type(metric_res) is torch.Tensor and metric_res.isnan().any():
+                    print(f"Metric {metric.name} is NaN")
+                    continue
+
                 if type(metric_res) is torch.Tensor:
                     metric_res = metric_res.detach().cpu()
 

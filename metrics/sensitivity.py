@@ -31,6 +31,7 @@ class Sensitivity(BaseMetric):
 
             BATCH_SIZE = 2
             FINAL_SIZE = 10 // BATCH_SIZE
+            ATTRIBUTION_SHAPE = None
 
             res = []
             for i in range(0, len(images), BATCH_SIZE):
@@ -44,6 +45,7 @@ class Sensitivity(BaseMetric):
                     .detach()
                     .cpu()
                 )
+                ATTRIBUTION_SHAPE = attribution_res.shape
 
                 # If any of the attributions is NaN, skip the batch
                 if torch.isnan(attribution_res).any():
@@ -54,7 +56,10 @@ class Sensitivity(BaseMetric):
                 res.append(attribution_res)
 
             if len(res) == 0:
-                return None
+                # Build a random very big tensor of the same shape of attributions
+                res = [
+                    torch.randn(ATTRIBUTION_SHAPE) * 9999999 for _ in range(FINAL_SIZE)
+                ]
 
             if len(res) != FINAL_SIZE:
                 remaining = FINAL_SIZE - len(res)
@@ -69,6 +74,10 @@ class Sensitivity(BaseMetric):
         kwargs["targets"] = class_idx
 
         sens = sensitivity_max(attribution_wrapper, test_images, **kwargs)
+
+        if (sens > 100).any():
+            return None
+
         if return_mean:
             sens = torch.mean(sens)
 
