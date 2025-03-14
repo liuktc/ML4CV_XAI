@@ -75,3 +75,6 @@ VGG11,_GradCAMPlusPlus,features.0,road_combined,SimpleUpsampling,-0.025939986109
 VGG11,_GradCAMPlusPlus,features.0,sensitivity,SimpleUpsampling,0.1173063293099403
 VGG11,_GradCAMPlusPlus,features.0,infidelity,SimpleUpsampling,0.0285292752087116
 VGG11,_GradCAMPlusPlus,features.0,road_combined,SimpleUpsampling,-0.0262930691242218
+VGG11,_DeepLiftShap,features.0,sensitivity,SimpleUpsampling,0.12818923592567444
+VGG11,_DeepLiftShap,features.0,infidelity,SimpleUpsampling,0.03764428570866585
+VGG11,_DeepLiftShap,features.0,road_combined,SimpleUpsampling,0.014565862715244293

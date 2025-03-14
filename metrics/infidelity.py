@@ -30,7 +30,9 @@ class Infidelity(BaseMetric):
         return_mean: bool = True,
         **kwargs,
     ) -> torch.Tensor:
-        saliency_maps = saliency_maps.expand(-1, 3, -1, -1)
+        saliency_maps = saliency_maps.expand(-1, 3, -1, -1).to(device)
+        test_images = test_images.to(device)
+        class_idx = class_idx.to(device)
         res = infidelity(
             model, perturb_fn, test_images, saliency_maps, target=class_idx
         )
