@@ -39,7 +39,6 @@ class Sensitivity(BaseMetric):
                 # Repeat targets
                 batch_targets = torch.repeat_interleave(targets, BATCH_SIZE, dim=0)
 
-                print(batch.shape, layer, batch_targets.shape, baseline_dist.shape)
                 attribution_res = (
                     attribution_method.attribute(
                         batch, model, layer, batch_targets, baseline_dist
