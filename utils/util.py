@@ -231,7 +231,7 @@ def calculate_erf(model, input, device):
             input_shape[3],
         )
     )
-    for x in tqdm(range(output.shape[2])):
+    for x in range(output.shape[2]):
         for y in range(output.shape[3]):
             input_tensor = input.clone().detach().requires_grad_(True).to(device)
             # Set the model to evaluation mode
