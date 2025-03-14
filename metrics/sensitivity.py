@@ -29,7 +29,7 @@ class Sensitivity(BaseMetric):
             if type(images) is tuple and len(images) == 1:
                 images = images[0]
 
-            BATCH_SIZE = 2
+            BATCH_SIZE = 1
             FINAL_SIZE = 10 // BATCH_SIZE
             ATTRIBUTION_SHAPE = None
 
@@ -38,6 +38,8 @@ class Sensitivity(BaseMetric):
                 batch = images[i : i + BATCH_SIZE].requires_grad_().to(device)
                 # Repeat targets
                 batch_targets = torch.repeat_interleave(targets, BATCH_SIZE, dim=0)
+
+                print(batch.shape, layer, batch_targets.shape, baseline_dist.shape)
                 attribution_res = (
                     attribution_method.attribute(
                         batch, model, layer, batch_targets, baseline_dist
