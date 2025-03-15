@@ -11,7 +11,19 @@ def resnet18_PascalVOC():
     return model
 
 
+def resnet18_Syntetic():
+    model = resnet18(ResNet18_Weights.DEFAULT)
+    model.fc = nn.Linear(512, 3)
+    return model
+
+
 def resnet50_PascalVOC():
     model = resnet50(ResNet50_Weights.DEFAULT)
     model.fc = nn.Linear(2048, 20)
+    return model
+
+
+def resnet50_Syntetic():
+    model = resnet50(ResNet50_Weights.DEFAULT)
+    model.fc = nn.Linear(2048, 3)
     return model
