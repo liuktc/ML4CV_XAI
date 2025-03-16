@@ -204,6 +204,7 @@ def get_layer_name(model: nn.Module, layer: nn.Module):
 def min_max_normalize(x: torch.Tensor) -> torch.Tensor:
     """Normalize the input tensor to the range [0,1].
         It works along the last 2 dimensions.
+
     Args:
         x (torch.Tensor): The input tensor of shape (B, C, H, W).
 

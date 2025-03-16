@@ -77,6 +77,10 @@ class ERFUpsampling(nn.Module):
         # Sum over channels
         result = result.sum(axis=0, keepdims=True)
 
+        result = torch.Tensor(result).unsqueeze(0)
+
+        result = min_max_normalize(result)
+
         return torch.Tensor(result).unsqueeze(0)
 
 
