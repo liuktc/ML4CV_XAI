@@ -102,3 +102,15 @@ VGG11,_GradCAMPlusPlus,features.0,precision,SimpleUpsampling,0.18051688373088837
 VGG11,_GradCAMPlusPlus,features.0,recall,SimpleUpsampling,0.43464258313179016
 VGG11,_GradCAMPlusPlus,features.0,precision,ERFUpsampling,0.08990474790334702
 VGG11,_GradCAMPlusPlus,features.0,recall,ERFUpsampling,0.17440195381641388
+VGG11,_GradCAMPlusPlus,features.0,roc_auc,SimpleUpsampling,0.7550504064901574
+VGG11,_GradCAMPlusPlus,features.0,roc_auc,SimpleUpsampling,0.7550504064901574
+VGG11,_GradCAMPlusPlus,features.0,roc_auc,SimpleUpsampling,0.7550504064901574
+VGG11,_GradCAMPlusPlus,features.0,recall,SimpleUpsampling,0.5547544936018812
+VGG11,_GradCAMPlusPlus,features.0,roc_auc,SimpleUpsampling,0.7550504064901574
+VGG11,_GradCAMPlusPlus,features.0,recall,SimpleUpsampling,0.5547544936018812
+VGG11,_GradCAMPlusPlus,features.0,roc_auc,SimpleUpsampling,0.7550504064901574
+VGG11,_GradCAMPlusPlus,features.0,recall,ERFUpsampling,0.5547544936018812
+VGG11,_GradCAMPlusPlus,features.0,roc_auc,SimpleUpsampling,0.7550504064901574
+VGG11,_GradCAMPlusPlus,features.0,recall,ERFUpsampling,0.5547544936018812
+VGG11,_GradCAMPlusPlus,features.0,roc_auc,SimpleUpsampling,0.7550504064901574
+VGG11,_GradCAMPlusPlus,features.0,recall,ERFUpsampling,0.5547544936018812

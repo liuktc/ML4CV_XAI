@@ -6,12 +6,12 @@ from .util import (
     cut_model_from_layer,
     min_max_normalize,
     calculate_erf,
+    post_process_erf,
 )
 from pytorch_grad_cam import GradCAMPlusPlus
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
-from typing import List
+from typing import List, Callable
 import numpy as np
-
 
 import psutil
 import os
@@ -55,11 +55,18 @@ class ERFUpsampling(nn.Module):
     Upsampling using effective receptive field (ERF) upsampling.
     """
 
-    def __init__(self, model, layer: nn.Module, device="cpu"):
+    def __init__(
+        self,
+        model,
+        layer: nn.Module,
+        device="cpu",
+        post_process_filter: Callable = post_process_erf,
+    ):
         super().__init__()
         # self.model = model
         self.device = device
         self.model = cut_model_to_layer(model, layer, included=True)
+        self.post_process_filter = post_process_filter
 
     def forward(self, attribution: torch.Tensor, image):
         erf = calculate_erf(self.model, image, device=self.device)
@@ -81,7 +88,10 @@ class ERFUpsampling(nn.Module):
 
         result = min_max_normalize(result)
 
-        return torch.Tensor(result).unsqueeze(0)
+        if self.post_process_filter is not None:
+            result = self.post_process_filter(result)
+
+        return torch.Tensor(result)
 
 
 class _DeepLiftShap(AttributionMethod):

@@ -3,6 +3,7 @@ from collections import OrderedDict
 import torch
 import numpy as np
 from tqdm.auto import tqdm
+from scipy.ndimage import gaussian_filter
 
 
 def cut_model_from_layer(
@@ -251,9 +252,20 @@ def calculate_erf(model, input, device):
             # Retrieve the gradient of the input
             grad_input = input_tensor.grad.data[0].cpu().numpy()
             grad_input = np.abs(grad_input)  # Get the absolute values of the gradients
-            grad_input = grad_input / np.max(grad_input)  # Normalize the gradients
+            grad_input = grad_input / (
+                np.max(grad_input) + 1e-6
+            )  # Normalize the gradients
 
             # Save the gradient of the input
             result[x, y] = grad_input
 
     return result
+
+
+def post_process_erf(attribution_map):
+    attribution_map = np.where(
+        attribution_map > np.percentile(attribution_map, 80), 1, attribution_map
+    )
+    attribution_map = gaussian_filter(attribution_map, sigma=5)
+
+    return attribution_map
