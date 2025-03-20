@@ -11,6 +11,7 @@ class ResultMetrics:
     def __init__(self, path: str):
         self.path = path
         self.HEADER = [
+            "Image Index",
             "Model",
             "Attribution Method",
             "Layer",
@@ -33,14 +34,31 @@ class ResultMetrics:
         self.save_results()
 
     def add_result(
-        self, model, attribution_method, layer, metric, upscale_method, value
+        self,
+        model,
+        attribution_method,
+        layer,
+        metric,
+        upscale_method,
+        value,
+        image_index=-1,
     ):
         # Add result to the results dataframe
         self.results = pd.concat(
             [
                 self.results,
                 pd.DataFrame(
-                    [[model, attribution_method, layer, metric, upscale_method, value]],
+                    [
+                        [
+                            image_index,
+                            model,
+                            attribution_method,
+                            layer,
+                            metric,
+                            upscale_method,
+                            value,
+                        ]
+                    ],
                     columns=self.HEADER,
                 ),
             ]

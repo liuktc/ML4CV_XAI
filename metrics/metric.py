@@ -46,6 +46,7 @@ def calculate_metrics(
     model_name: str = None,
     debug: bool = False,
     contains_mask: bool = False,
+    save_each_image_result: bool = False,
 ) -> dict:
     """Function to calculate all the different metrics on the model using the given attribution method
 
@@ -79,7 +80,7 @@ def calculate_metrics(
         baseline_dist = torch.cat([images for images, _ in train_dl]).to(device)
 
     for layer in layers:
-        for batch in tqdm(test_dl):
+        for image_index, batch in enumerate(tqdm(test_dl)):
             if contains_mask:
                 images, masks, labels = batch
             else:
@@ -160,71 +161,21 @@ def calculate_metrics(
                 if type(metric_res) is torch.Tensor:
                     metric_res = metric_res.detach().cpu()
 
+                if save_each_image_result:
+                    result_metrics.add_result(
+                        model=model_name,
+                        attribution_method=attribute_method.__class__.__name__,
+                        layer=layer_names[layer],
+                        metric=metric.name,
+                        upscale_method=upsample.__class__.__name__,
+                        value=metric_res,
+                        image_index=image_index,
+                    )
+
                 res[layer_names[layer]][metric.name].append(metric_res)
 
                 if debug:
                     print_memory_usage()
-
-            # avg_drop = (
-            #     (
-            #         average_drop(model, images, saliency_maps, labels, device)
-            #         .detach()
-            #         .cpu()
-            #     )
-            #     .mean()
-            #     .item()
-            # )
-
-            # if debug:
-            #     print_memory_usage()
-
-            # increase = (
-            #     (
-            #         increase_in_confidence(model, images, saliency_maps, labels, device)
-            #         .detach()
-            #         .cpu()
-            #     )
-            #     .mean()
-            #     .item()
-            # )
-
-            # if debug:
-            #     print_memory_usage()
-
-            # insertion_curve_AUC_score = (
-            #     (
-            #         insertion_curve_AUC(model, images, saliency_maps, labels, device)
-            #         .detach()
-            #         .cpu()
-            #     )
-            #     .mean()
-            #     .item()
-            # )
-
-            # if debug:
-            #     print_memory_usage()
-
-            # deletion_curve_AUC_score = (
-            #     (
-            #         deletion_curve_AUC(model, images, saliency_maps, labels, device)
-            #         .detach()
-            #         .cpu()
-            #     )
-            #     .mean()
-            #     .item()
-            # )
-
-            # if debug:
-            #     print_memory_usage()
-
-            # res[layer_names[layer]]["avg_drop"].append(avg_drop)
-            # res[layer_names[layer]]["increase"].append(increase)
-            # res[layer_names[layer]]["insertion_curve_AUC"].append(
-            #     insertion_curve_AUC_score
-            # )
-            # res[layer_names[layer]]["deletion_curve_AUC"].append(
-            #     deletion_curve_AUC_score
-            # )
 
             # **Explicitly delete tensors and clear cache**
             del images, labels, attributions, saliency_maps
@@ -236,13 +187,14 @@ def calculate_metrics(
                 res[layer_names[layer]][metric.name]
             )
 
-            result_metrics.add_result(
-                model_name,
-                attribute_method.__class__.__name__,
-                layer_names[layer],
-                metric.name,
-                upsample.__class__.__name__,
-                res[layer_names[layer]][metric.name],
-            )
+            if not save_each_image_result:
+                result_metrics.add_result(
+                    model=model_name,
+                    attribution_method=attribute_method.__class__.__name__,
+                    layer=layer_names[layer],
+                    metric=metric.name,
+                    upscale_method=upsample.__class__.__name__,
+                    value=res[layer_names[layer]][metric.name],
+                )
 
     return res

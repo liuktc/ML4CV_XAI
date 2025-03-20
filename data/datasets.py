@@ -9,6 +9,8 @@ import numpy as np
 from .util import draw_random_shapes
 import matplotlib.pyplot as plt
 from PIL import Image
+import hashlib
+
 
 FROM_LABEL_TO_IDX = {
     "aeroplane": 0,
@@ -129,7 +131,11 @@ class SynteticFigures(Dataset):
         self.size_range = size_range
         self.num_images = num_images
         self.num_other_shapes = num_other_shapes
-        self.initial_seed = hash(split) % 2**32
+
+        def hash_string(s: str) -> int:
+            return int(hashlib.sha256(s.encode()).hexdigest(), 16) % 2**32
+
+        self.initial_seed = hash_string(split)
 
         # Read all the images in the background path
         self.background_images = []

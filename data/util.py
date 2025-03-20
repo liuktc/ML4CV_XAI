@@ -10,6 +10,8 @@ def draw_random_shapes(
     seed: int = 0,
     num_other_shapes=0,
 ):
+    # Use the seed
+    np.random.seed(seed)
     if shape_type == 0:
         shape_types = (
             [shape_type] * num_shapes + [1] * num_other_shapes + [2] * num_other_shapes

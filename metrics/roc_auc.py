@@ -12,19 +12,13 @@ class ROC_AUC(BaseMetric):
 
     def __call__(
         self,
-        model: nn.Module,
-        test_images: torch.Tensor,
         saliency_maps: torch.Tensor,
-        class_idx: int | torch.Tensor,
-        attribution_method: AttributionMethod,
-        device: torch.device | str = "cpu",
-        apply_softmax: bool = True,
-        return_mean: bool = True,
+        mask: torch.Tensor,
         **kwargs,
     ) -> torch.Tensor:
-        if "mask" not in kwargs:
-            raise ValueError("mask not provided in kwargs")
-        mask = kwargs["mask"]
+        # if "mask" not in kwargs:
+        # raise ValueError("mask not provided in kwargs")
+        # mask = kwargs["mask"]
         mask = mask.detach().cpu().numpy()
         attribution = saliency_maps.detach().cpu().numpy()
 
