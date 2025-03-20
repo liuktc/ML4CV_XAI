@@ -292,7 +292,8 @@ def calculate_erf_on_attribution(model, input, attribution_map, device):
     return grad_input
 
 
-def post_process_erf(attribution_map):
+def post_process_erf(attribution_map: torch.Tensor):
+    attribution_map = attribution_map.detach().cpu().numpy()
     attribution_map = np.where(
         attribution_map > np.percentile(attribution_map, 80), 1, attribution_map
     )

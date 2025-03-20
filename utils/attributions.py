@@ -92,7 +92,7 @@ class ERFUpsampling(nn.Module):
         if self.post_process_filter is not None:
             result = self.post_process_filter(result)
 
-        return torch.Tensor(result)
+        return torch.Tensor(result).to(self.device)
 
 
 class ERFUpsamplingFast(nn.Module):
@@ -123,7 +123,7 @@ class ERFUpsamplingFast(nn.Module):
         if self.post_process_filter is not None:
             result = self.post_process_filter(result)
 
-        return torch.Tensor(result)
+        return torch.Tensor(result).to(self.device)
 
 
 class _DeepLiftShap(AttributionMethod):
