@@ -45,6 +45,7 @@ def calculate_metrics(
     rescale_perc: float = 0.3,
     model_name: str = None,
     debug: bool = False,
+    contains_mask: bool = False,
 ) -> dict:
     """Function to calculate all the different metrics on the model using the given attribution method
 
@@ -72,10 +73,18 @@ def calculate_metrics(
     }
 
     # Use the train_dl as baseline distribution
-    baseline_dist = torch.cat([images for images, _ in train_dl]).to(device)
+    if contains_mask:
+        baseline_dist = torch.cat([images for images, _, _ in train_dl]).to(device)
+    else:
+        baseline_dist = torch.cat([images for images, _ in train_dl]).to(device)
 
     for layer in layers:
-        for images, labels in tqdm(test_dl):
+        for batch in tqdm(test_dl):
+            if contains_mask:
+                images, masks, labels = batch
+            else:
+                images, labels = batch
+                masks = None
             if debug:
                 print("-" * 80)
                 print_memory_usage()
@@ -137,6 +146,7 @@ def calculate_metrics(
                     device=device,
                     baseline_dist=baseline_dist,
                     layer=layer,
+                    mask=masks,
                 )
 
                 if metric_res is None:

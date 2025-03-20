@@ -262,6 +262,36 @@ def calculate_erf(model, input, device):
     return result
 
 
+def calculate_erf_on_attribution(model, input, attribution_map, device):
+    input_tensor = input.clone().detach().requires_grad_(True).to(device)
+    model.eval()
+    output = model(input_tensor)
+
+    input_tensor = input.clone().detach().requires_grad_(True).to(device)
+    # Set the model to evaluation mode
+    model.eval()
+
+    # Forward pass: compute the output tensor
+    output = model(input_tensor)
+    # Initialize the output gradient as zero everywhere and 1 at a specific location
+    grad_output = torch.zeros_like(output)
+    for x in range(output.shape[2]):
+        for y in range(output.shape[3]):
+            grad_output[0, :, x, y] = attribution_map[
+                0, 0, x, y
+            ]  # Target a specific output unit
+
+    # Backward pass: compute gradient of the output with respect to the input image
+    output.backward(grad_output, retain_graph=True)
+
+    # Retrieve the gradient of the input
+    grad_input = input_tensor.grad.data[0].cpu().numpy()
+    grad_input = np.abs(grad_input)  # Get the absolute values of the gradients
+    grad_input = grad_input / (np.max(grad_input) + 1e-6)  # Normalize the gradients
+
+    return grad_input
+
+
 def post_process_erf(attribution_map):
     attribution_map = np.where(
         attribution_map > np.percentile(attribution_map, 80), 1, attribution_map

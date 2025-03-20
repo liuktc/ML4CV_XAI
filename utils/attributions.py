@@ -7,6 +7,7 @@ from .util import (
     min_max_normalize,
     calculate_erf,
     post_process_erf,
+    calculate_erf_on_attribution,
 )
 from pytorch_grad_cam import GradCAMPlusPlus
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
@@ -85,6 +86,37 @@ class ERFUpsampling(nn.Module):
         result = result.sum(axis=0, keepdims=True)
 
         result = torch.Tensor(result).unsqueeze(0)
+
+        result = min_max_normalize(result)
+
+        if self.post_process_filter is not None:
+            result = self.post_process_filter(result)
+
+        return torch.Tensor(result)
+
+
+class ERFUpsamplingFast(nn.Module):
+    def __init__(
+        self,
+        model,
+        layer: nn.Module,
+        device="cpu",
+        post_process_filter: Callable = post_process_erf,
+    ):
+        super().__init__()
+        # self.model = model
+        self.device = device
+        self.model = cut_model_to_layer(model, layer, included=True)
+        self.post_process_filter = post_process_filter
+
+    def forward(self, attribution: torch.Tensor, image):
+        # erf = calculate_erf(self.model, image, device=self.device)
+        result = calculate_erf_on_attribution(
+            self.model, image, attribution, self.device
+        )
+
+        result = torch.Tensor(result, device=self.device)
+        result = result.sum(axis=0).unsqueeze(0).unsqueeze(0)
 
         result = min_max_normalize(result)
 

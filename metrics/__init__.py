@@ -6,3 +6,4 @@ from .insertion_curve import InsertionCurveAUC
 from .infidelity import Infidelity
 from .sensitivity import Sensitivity
 from .road import RoadCombined
+from .roc_auc import ROC_AUC
