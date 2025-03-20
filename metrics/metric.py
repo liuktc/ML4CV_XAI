@@ -113,7 +113,7 @@ def calculate_metrics(
                 < 1e-6
             ).any():
                 print("A saliency map is constant, skipping batch")
-                del images, labels, attributions, saliency_maps
+                del images, labels, attributions, saliency_maps, masks
                 torch.cuda.empty_cache()
                 continue
 
@@ -126,7 +126,7 @@ def calculate_metrics(
 
             if saliency_maps.isnan().any():
                 print("A saliency map is NaN, skipping batch")
-                del images, labels, attributions, saliency_maps
+                del images, labels, attributions, saliency_maps, masks
                 torch.cuda.empty_cache()
                 continue
 
@@ -178,7 +178,7 @@ def calculate_metrics(
                     print_memory_usage()
 
             # **Explicitly delete tensors and clear cache**
-            del images, labels, attributions, saliency_maps
+            del images, labels, attributions, saliency_maps, metric_res, masks
             torch.cuda.empty_cache()
 
         for metric in metrics:
