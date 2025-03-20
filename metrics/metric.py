@@ -180,7 +180,6 @@ def calculate_metrics(
             # **Explicitly delete tensors and clear cache**
             del images, labels, attributions, saliency_maps
             torch.cuda.empty_cache()
-            # del avg_drop, increase, insertion_curve_AUC_score, deletion_curve_AUC_score
 
         for metric in metrics:
             res[layer_names[layer]][metric.name] = np.mean(
