@@ -1,4 +1,4 @@
-from typing import List, Literal
+from typing import List
 
 import torch
 import torch.nn as nn
@@ -13,12 +13,7 @@ from utils.attributions import AttributionMethod
 from results import ResultMetrics
 from utils import get_layer_name, scale_saliencies
 
-from .average_drop import AverageDrop
-from .increase_in_confidence import IncreaseInConfidence
-from .insertion_curve import InsertionCurveAUC
-from .deletion_curve import DeletionCurveAUC
 from .utils import BaseMetric
-
 
 import psutil
 import os
@@ -58,7 +53,7 @@ def calculate_metrics(
         layers (List[nn.Module]): The layers to calculate the metrics on
         upsample (nn.Module): The upsampling method to use. Either SimpleUpsampling or ERFUpsampling.
         device (torch.device | str, optional): The device to use. Defaults to "cpu".
-        rescale_saliency (bool, optional): If set to true, rescale the saliency map to have a fixed are underneath it. Defaults to False.
+        rescale_saliency (bool, optional): If set to true, rescale the saliency map to have a fixed area underneath it. Defaults to False.
         rescale_perc (float, optional): Parameter used to rescale the saliency map. Defaults to 0.3.
 
     Returns:

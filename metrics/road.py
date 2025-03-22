@@ -24,6 +24,7 @@ class RoadCombined(BaseMetric):
         device: torch.device | str = "cpu",
         apply_softmax: bool = True,
         return_mean: bool = True,
+        return_visualization: bool = False,
         **kwargs,
     ) -> torch.Tensor:
         percentiles = [20, 40, 60, 80]
@@ -38,17 +39,18 @@ class RoadCombined(BaseMetric):
         if return_mean:
             scores = scores.mean()
 
-        if "return_visualization" not in kwargs:
+        if not return_visualization:
             return scores
 
         # Calculate visualization
-        visualization_results = {}
-        for perc in percentiles:
-            for imputer in [
-                ROADMostRelevantFirst(perc),
-                ROADLeastRelevantFirst(perc),
-            ]:
-                scores, visualizations = imputer(
+        visualization_results = []
+        scores = []
+        for imputer in [
+            ROADMostRelevantFirst,
+            ROADLeastRelevantFirst,
+        ]:
+            for perc in percentiles:
+                score, visualizations = imputer(perc)(
                     test_images,
                     saliency_maps,
                     targets,
@@ -56,11 +58,11 @@ class RoadCombined(BaseMetric):
                     return_visualization=True,
                 )
 
-                if imputer.__class__.__name__ not in visualization_results:
-                    visualization_results[imputer.__class__.__name__] = []
+                scores.append(score)
 
-                visualization_results[imputer.__class__.__name__].append(
-                    visualizations[0].detach().cpu()
-                )
+                # if imputer.__class__.__name__ not in visualization_results:
+                #     visualization_results[imputer.__class__.__name__] = []
+
+                visualization_results.append(visualizations[0].detach().cpu())
 
         return scores, visualization_results

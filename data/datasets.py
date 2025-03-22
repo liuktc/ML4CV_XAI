@@ -109,6 +109,15 @@ class PascalVOC2007(Dataset):
                 return img_obj, label
 
 
+def deterministic_walk(directory):
+    for root, dirs, files in sorted(
+        os.walk(directory), key=lambda x: x[0]
+    ):  # Sort by root directory name
+        dirs.sort()  # Sort directories in-place
+        files.sort()  # Sort files in-place
+        yield root, dirs, files
+
+
 class SynteticFigures(Dataset):
     def __init__(
         self,
@@ -139,7 +148,7 @@ class SynteticFigures(Dataset):
 
         # Read all the images in the background path
         self.background_images = []
-        for root, _, files in os.walk(background_path):
+        for root, _, files in deterministic_walk(self.background_path):
             for file in files:
                 if file.endswith(".jpg"):
                     self.background_images.append(os.path.join(root, file))
