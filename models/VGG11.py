@@ -23,3 +23,9 @@ def vgg11_Syntetic():
     model = vgg11()
     model.classifier[-1] = nn.Linear(4096, 3)
     return model
+
+
+def vgg11_Imagenettewoof():
+    model = vgg11()
+    model.classifier[-1] = nn.Linear(4096, 20)
+    return model
