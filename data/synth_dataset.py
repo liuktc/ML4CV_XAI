@@ -28,7 +28,6 @@ class SynteticFigures(Dataset):
         image_transform=None,
         background_transform=None,
         mask_preprocess=None,
-        num_other_shapes=0,
     ):
         super().__init__()
         self.background_path = background_path
@@ -38,7 +37,6 @@ class SynteticFigures(Dataset):
         self.num_shapes_per_image = num_shapes_per_image
         self.size_range = size_range
         self.num_images = num_images
-        self.num_other_shapes = num_other_shapes
 
         def hash_string(s: str) -> int:
             return int(hashlib.sha256(s.encode()).hexdigest(), 16) % 2**32
@@ -80,7 +78,7 @@ class SynteticFigures(Dataset):
         # Set the background back to numpy array
         background = background.permute(1, 2, 0).numpy().astype(np.int16)
 
-        label = np.random.randint(0, 3)
+        label = np.random.randint(0, 6)
 
         img, mask = draw_random_shapes(
             background,
@@ -88,7 +86,6 @@ class SynteticFigures(Dataset):
             num_shapes=self.num_shapes_per_image,
             size_range=self.size_range,
             seed=seed,
-            num_other_shapes=self.num_other_shapes,
         )
 
         img = img.astype(np.uint8)

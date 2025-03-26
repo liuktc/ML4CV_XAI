@@ -21,7 +21,7 @@ def vgg11_PascalVOC():
 
 def vgg11_Syntetic():
     model = vgg11()
-    model.classifier[-1] = nn.Linear(4096, 3)
+    model.classifier[-1] = nn.Linear(4096, 6)
     return model
 
 

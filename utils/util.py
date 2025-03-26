@@ -292,11 +292,19 @@ def calculate_erf_on_attribution(model, input, attribution_map, device):
     return grad_input
 
 
-def post_process_erf(attribution_map: torch.Tensor):
+def get_sigma(n: int):
+    # Assume n in [0,20]
+    a = -20 / (np.log(1 / 5))
+    return 5 * np.exp((n - 20) / a)
+
+
+def post_process_erf(attribution_map: torch.Tensor, layer_number: int):
+    # Assume the layer_number is in [0, 20]
     attribution_map = attribution_map.detach().cpu().numpy()
     attribution_map = np.where(
         attribution_map > np.percentile(attribution_map, 80), 1, attribution_map
     )
-    attribution_map = gaussian_filter(attribution_map, sigma=5)
+
+    attribution_map = gaussian_filter(attribution_map, sigma=get_sigma(layer_number))
 
     return attribution_map

@@ -95,10 +95,17 @@ class ERFUpsampling(nn.Module):
         return torch.Tensor(result).to(self.device)
 
 
+def get_layer_name(model: nn.Module, layer: nn.Module):
+    for name, module in model.named_modules():
+        if module == layer:
+            return name
+    return None
+
+
 class ERFUpsamplingFast(nn.Module):
     def __init__(
         self,
-        model,
+        model: nn.Module,
         layer: nn.Module,
         device="cpu",
         post_process_filter: Callable = post_process_erf,
@@ -108,6 +115,7 @@ class ERFUpsamplingFast(nn.Module):
         self.device = device
         self.model = cut_model_to_layer(model, layer, included=True)
         self.post_process_filter = post_process_filter
+        self.layer_number = int(get_layer_name(model, layer).split(".")[1])
 
     def forward(self, attribution: torch.Tensor, image):
         # erf = calculate_erf(self.model, image, device=self.device)
@@ -121,7 +129,7 @@ class ERFUpsamplingFast(nn.Module):
         result = min_max_normalize(result)
 
         if self.post_process_filter is not None:
-            result = self.post_process_filter(result)
+            result = self.post_process_filter(result, self.layer_number)
 
         return torch.Tensor(result).to(self.device)
 
