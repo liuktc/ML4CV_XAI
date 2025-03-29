@@ -123,7 +123,7 @@ class ERFUpsamplingFast(nn.Module):
             self.model, image, attribution, self.device
         )
 
-        result = torch.Tensor(result).to(self.device)
+        result = result.to(device=self.device)
         result = result.sum(axis=0).unsqueeze(0).unsqueeze(0)
 
         result = min_max_normalize(result)

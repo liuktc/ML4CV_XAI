@@ -8,5 +8,6 @@ data/VOCdevkit/*
 data/image*/
 *.tar
 *.tgz
+*.pkl
 
 runs/*
