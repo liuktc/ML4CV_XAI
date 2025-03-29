@@ -217,7 +217,9 @@ class Binarize(object):
     def __init__(self):
         pass
 
-    def __call__(self, img):
+    def __call__(self, img: torch.Tensor):
+        # Sum over the channels
+        img = img.sum(dim=0, keepdim=True)
         img[img > 0] = 1
         img[img <= 0] = 0
         return img
