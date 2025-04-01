@@ -23,9 +23,7 @@ class Sensitivity(BaseMetric):
         **kwargs,
     ) -> torch.Tensor:
         # **kwargs needs to contain baseline_dist and layer
-        def attribution_wrapper(
-            images: torch.Tensor, model, layer, targets, baseline_dist, **kwargs
-        ):
+        def attribution_wrapper(images: torch.Tensor, model, layer, targets, **kwargs):
             if type(images) is tuple and len(images) == 1:
                 images = images[0]
 
@@ -41,7 +39,10 @@ class Sensitivity(BaseMetric):
 
                 attribution_res = (
                     attribution_method.attribute(
-                        batch, model, layer, batch_targets, baseline_dist
+                        input_tensor=batch,
+                        model=model,
+                        layer=layer,
+                        target=batch_targets,
                     )
                     .detach()
                     .cpu()
@@ -82,4 +83,4 @@ class Sensitivity(BaseMetric):
         if return_mean:
             sens = torch.mean(sens)
 
-        return sens.detach().cpu()
+        return sens.detach().cpu().item()

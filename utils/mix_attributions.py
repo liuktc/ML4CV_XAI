@@ -4,7 +4,10 @@ from copy import deepcopy
 
 
 class Mixer:
-    def __init__(self, layers_to_combine: Literal["all", "top", "above"] = "all"):
+    def __init__(
+        self, name: str, layers_to_combine: Literal["all", "top", "above"] = "all"
+    ):
+        self.name = name
         self.layers_to_combine = layers_to_combine
 
     def filter_layers(self, attributions: List[torch.Tensor]):
@@ -25,16 +28,16 @@ class Mixer:
             # Second most fine-grained + most fine-grained
             return [copy_attributions[-2], copy_attributions[-1]]
 
-    def __call__(self, attributions: List[torch.Tensor]):
+    def __call__(self, attributions: List[torch.Tensor]) -> torch.Tensor:
         raise NotImplementedError()
         pass
 
 
 class MultiplierMix(Mixer):
     def __init__(self, layers_to_combine: Literal["all", "top", "above"] = "all"):
-        Mixer.__init__(self, layers_to_combine)
+        Mixer.__init__(self, "MultiplierMix", layers_to_combine)
 
-    def __call__(self, attributions: List[torch.Tensor]):
+    def __call__(self, attributions: List[torch.Tensor]) -> torch.Tensor:
         """
         The attributions are assumed to be ordered from the most coarse to the most fine-grained.
         """
@@ -51,9 +54,9 @@ class MultiplierMix(Mixer):
 
 class LogExpMix(Mixer):
     def __init__(self, layers_to_combine: Literal["all", "top", "above"] = "all"):
-        Mixer.__init__(self, layers_to_combine)
+        Mixer.__init__(self, "LogExpMix", layers_to_combine)
 
-    def __call__(self, attributions: List[torch.Tensor]):
+    def __call__(self, attributions: List[torch.Tensor]) -> torch.Tensor:
         """
         The attributions are assumed to be ordered from the most coarse to the most fine-grained.
         """

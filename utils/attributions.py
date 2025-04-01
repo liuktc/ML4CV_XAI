@@ -26,7 +26,8 @@ def print_memory_usage():
 
 
 class AttributionMethod:
-    def __init__(self):
+    def __init__(self, name: str = None):
+        self.name = name
         pass
 
     def attribute(
@@ -41,13 +42,14 @@ class AttributionMethod:
 
 
 class SimpleUpsampling(nn.Module):
-    def __init__(self, size, mode="bilinear"):
+    def __init__(self, size, mode="bilinear", name: str = "bilinearUpsampling"):
         super().__init__()
         self.size = size
         self.mode = mode
         self.up = nn.Upsample(size=self.size, mode=self.mode)
+        self.name = name
 
-    def forward(self, attribution, _):
+    def forward(self, attribution, **kwargs):
         return self.up(attribution)
 
 
@@ -105,25 +107,20 @@ def get_layer_name(model: nn.Module, layer: nn.Module):
 class ERFUpsamplingFast(nn.Module):
     def __init__(
         self,
-        model: nn.Module,
-        layer: nn.Module,
-        device="cpu",
         post_process_filter: Callable = post_process_erf,
+        name: str = "ERFUpsamplingFast",
     ):
         super().__init__()
-        # self.model = model
-        self.device = device
-        self.model = cut_model_to_layer(model, layer, included=True)
         self.post_process_filter = post_process_filter
+        self.name = name
+
+    def forward(self, attribution: torch.Tensor, image, device, model, layer, **kwargs):
+        self.model = cut_model_to_layer(model, layer, included=True)
         self.layer_number = int(get_layer_name(model, layer).split(".")[1])
-
-    def forward(self, attribution: torch.Tensor, image):
         # erf = calculate_erf(self.model, image, device=self.device)
-        result = calculate_erf_on_attribution(
-            self.model, image, attribution, self.device
-        )
+        result = calculate_erf_on_attribution(self.model, image, attribution, device)
 
-        result = result.to(device=self.device)
+        result = result.to(device=device)
         result = result.sum(axis=0).unsqueeze(0).unsqueeze(0)
 
         result = min_max_normalize(result)
@@ -131,18 +128,24 @@ class ERFUpsamplingFast(nn.Module):
         if self.post_process_filter is not None:
             result = self.post_process_filter(result, self.layer_number)
 
-        return torch.Tensor(result).to(self.device)
+        return torch.Tensor(result).to(device)
 
 
 class _DeepLiftShap(AttributionMethod):
+    def __init__(
+        self, baseline_images: torch.Tensor = None, name: str = "DeepLiftShap"
+    ):
+        super().__init__(name=name)
+        self.baseline_images = baseline_images
+
     def attribute(
         self,
         input_tensor: torch.Tensor,
         model: nn.Module,
         layer: str | nn.Module,
         target: torch.Tensor,
-        baseline_dist: torch.Tensor = None,
         normalize: bool = True,
+        **kwargs,
     ):
         model_to = cut_model_to_layer(
             model, layer, included=True
@@ -153,10 +156,10 @@ class _DeepLiftShap(AttributionMethod):
 
         input_to_model = model_to(input_tensor)
         dl = DeepLiftShap(model_from)
-        if baseline_dist is None:
+        if self.baseline_images is None:
             baseline_dist = torch.randn_like(input_to_model) * 0.001
         else:
-            baseline_dist = model_to(baseline_dist)
+            baseline_dist = model_to(self.baseline_images)
 
         attributions, delta = dl.attribute(
             input_to_model, baseline_dist, target=target, return_convergence_delta=True
@@ -170,11 +173,11 @@ class _DeepLiftShap(AttributionMethod):
 
 
 class _GradCAMPlusPlus(AttributionMethod):
-    def __init__(self, model: nn.Module, target_layer: str | nn.Module):
-        self.model = model
-        self.target_layer = target_layer
-
-        self.cam = GradCAMPlusPlusNoResize(model=model, target_layers=[target_layer])
+    def __init__(
+        self,
+        name: str = "GradCAMPlusPlus",
+    ):
+        super().__init__(name=name)
 
     def attribute(
         self,
@@ -182,14 +185,16 @@ class _GradCAMPlusPlus(AttributionMethod):
         model: nn.Module,
         layer: str | nn.Module,
         target: torch.Tensor,
-        baseline_dist: torch.Tensor = None,
         normalize: bool = True,
+        **kwargs,
     ):
         with torch.enable_grad():
+            cam = GradCAMPlusPlusNoResize(model=model, target_layers=[layer])
+
             targets = [ClassifierOutputTarget(t) for t in target]
 
             # Compute GradCAM
-            grayscale_cam = self.cam(input_tensor=input_tensor, targets=targets)
+            grayscale_cam = cam(input_tensor=input_tensor, targets=targets)
 
             # Convert to tensor efficiently and move to same device as input
             grayscale_cam_tensor = torch.from_numpy(grayscale_cam).to(

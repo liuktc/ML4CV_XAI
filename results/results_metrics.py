@@ -13,10 +13,12 @@ class ResultMetrics:
         self.HEADER = [
             "Image Index",
             "Model",
+            "Dataset",
             "Attribution Method",
             "Layer",
             "Metric",
             "Upscale Method",
+            "Mixing Method",
             "Value",
         ]
 
@@ -37,9 +39,11 @@ class ResultMetrics:
         self,
         model,
         attribution_method,
+        dataset,
         layer,
         metric,
         upscale_method,
+        mixing_method,
         value,
         image_index=-1,
     ):
@@ -52,10 +56,12 @@ class ResultMetrics:
                         [
                             image_index,
                             model,
+                            dataset,
                             attribution_method,
                             layer,
                             metric,
                             upscale_method,
+                            mixing_method,
                             value,
                         ]
                     ],
