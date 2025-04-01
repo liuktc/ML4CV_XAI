@@ -1,4 +1,4 @@
-from torch.utils.data import Dataset, ConcatDataset
+from torch.utils.data import Dataset, ConcatDataset, Subset
 from .imagenette import Imagenette
 from .imagewoof import Imagewoof
 
@@ -24,12 +24,64 @@ def imagenettewoof(
     download: bool = False,
     transform=None,
 ):
-    imagenette = Imagenette(root, split, size, download, transform)
-    imagewoof = Imagewoof(root, split, size, download, transform)
+    TEST_SIZE = 1000
+    if split == "train":
+        imagenette = Imagenette(root, split, size, download, transform)
+        imagewoof = Imagewoof(root, split, size, download, transform)
 
-    # Offset ImageWoof labels
-    imagewoof = OffsetDataset(imagewoof, 10)
+        # Offset ImageWoof labels
+        imagewoof = OffsetDataset(imagewoof, 10)
 
-    merged_dataset = ConcatDataset([imagenette, imagewoof])
+        merged_dataset = ConcatDataset([imagenette, imagewoof])
 
-    return merged_dataset
+        return merged_dataset
+    elif split == "val":
+        imagenette = Imagenette(root, split, size, download, transform)
+        imagewoof = Imagewoof(root, split, size, download, transform)
+
+        imagenette_total_size = len(imagenette)
+        imagewoof_total_size = len(imagewoof)
+
+        imagenette_val_size = imagenette_total_size - TEST_SIZE // 2
+        imagewoof_val_size = imagewoof_total_size - TEST_SIZE // 2
+
+        imagenette_val_indices = list(range(imagenette_val_size))
+        imagewoof_val_indices = list(range(imagewoof_val_size))
+
+        imagenette_val = Subset(imagenette, imagenette_val_indices)
+        imagewoof_val = Subset(imagewoof, imagewoof_val_indices)
+
+        # Offset ImageWoof labels
+        imagewoof_val = OffsetDataset(imagewoof_val, 10)
+
+        merged_dataset = ConcatDataset([imagenette_val, imagewoof_val])
+
+        return merged_dataset
+    elif split == "test":
+        imagenette = Imagenette(root, "val", size, download, transform)
+        imagewoof = Imagewoof(root, "val", size, download, transform)
+
+        imagenette_total_size = len(imagenette)
+        imagewoof_total_size = len(imagewoof)
+
+        imagenette_test_size = TEST_SIZE // 2
+        imagewoof_test_size = TEST_SIZE // 2
+
+        imagenette_test_indices = list(
+            range(imagenette_total_size - imagenette_test_size, imagenette_total_size)
+        )
+        imagewoof_test_indices = list(
+            range(imagewoof_total_size - imagewoof_test_size, imagewoof_total_size)
+        )
+
+        imagenette_test = Subset(imagenette, imagenette_test_indices)
+        imagewoof_test = Subset(imagewoof, imagewoof_test_indices)
+
+        # Offset ImageWoof labels
+        imagewoof_test = OffsetDataset(imagewoof_test, 10)
+
+        merged_dataset = ConcatDataset([imagenette_test, imagewoof_test])
+
+        return merged_dataset
+    else:
+        raise ValueError("split must be 'train' or 'val'")
