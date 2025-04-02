@@ -74,3 +74,9 @@ class ResultMetrics:
 
     def save_results(self):
         self.results.to_csv(self.path, index=False)
+
+    def get_last_image_index(self):
+        if self.results.empty:
+            return -1
+        else:
+            return self.results["Image Index"].max()
