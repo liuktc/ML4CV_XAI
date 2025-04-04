@@ -34,13 +34,13 @@ class RoadCombined(BaseMetric):
             saliency_maps = saliency_maps.squeeze(1)
 
         saliency_maps = saliency_maps.detach().cpu().numpy()
-        scores = road_combined(test_images, saliency_maps, targets, model)
+        scores_combined = road_combined(test_images, saliency_maps, targets, model)
 
         if return_mean:
-            scores = scores.mean()
+            scores_combined = scores_combined.mean()
 
         if not return_visualization:
-            return scores
+            return scores_combined
 
         # Calculate visualization
         visualization_results = []
@@ -65,4 +65,4 @@ class RoadCombined(BaseMetric):
 
                 visualization_results.append(visualizations[0].detach().cpu())
 
-        return scores, visualization_results
+        return scores, scores_combined, visualization_results

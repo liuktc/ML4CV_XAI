@@ -1,6 +1,7 @@
 from torch.utils.data import Dataset, ConcatDataset, Subset
 from .imagenette import Imagenette
 from .imagewoof import Imagewoof
+import numpy as np
 
 
 # Custom wrapper to offset labels in ImageWoof
@@ -45,8 +46,18 @@ def imagenettewoof(
         imagenette_val_size = imagenette_total_size - TEST_SIZE // 2
         imagewoof_val_size = imagewoof_total_size - TEST_SIZE // 2
 
-        imagenette_val_indices = list(range(imagenette_val_size))
-        imagewoof_val_indices = list(range(imagewoof_val_size))
+        # Produces a random permutation with a fixed seed
+        # to ensure reproducibility
+        np.random.seed(42)
+        imagenette_val_indices = np.random.permutation(imagenette_total_size)[
+            :imagenette_val_size
+        ]
+        imagewoof_val_indices = np.random.permutation(imagewoof_total_size)[
+            :imagewoof_val_size
+        ]
+
+        # imagenette_val_indices = list(range(imagenette_val_size))
+        # imagewoof_val_indices = list(range(imagewoof_val_size))
 
         imagenette_val = Subset(imagenette, imagenette_val_indices)
         imagewoof_val = Subset(imagewoof, imagewoof_val_indices)
@@ -67,12 +78,21 @@ def imagenettewoof(
         imagenette_test_size = TEST_SIZE // 2
         imagewoof_test_size = TEST_SIZE // 2
 
-        imagenette_test_indices = list(
-            range(imagenette_total_size - imagenette_test_size, imagenette_total_size)
-        )
-        imagewoof_test_indices = list(
-            range(imagewoof_total_size - imagewoof_test_size, imagewoof_total_size)
-        )
+        np.random.seed(42)
+        imagenette_test_indices = np.random.permutation(imagenette_total_size)[
+            -imagenette_test_size:
+        ]
+
+        imagewoof_test_indices = np.random.permutation(imagewoof_total_size)[
+            -imagewoof_test_size:
+        ]
+
+        # imagenette_test_indices = list(
+        #     range(imagenette_total_size - imagenette_test_size, imagenette_total_size)
+        # )
+        # imagewoof_test_indices = list(
+        #     range(imagewoof_total_size - imagewoof_test_size, imagewoof_total_size)
+        # )
 
         imagenette_test = Subset(imagenette, imagenette_test_indices)
         imagewoof_test = Subset(imagewoof, imagewoof_test_indices)
