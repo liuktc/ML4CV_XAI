@@ -48,7 +48,7 @@ class ResultMetrics:
         mixing_method,
         value,
         label=-1,
-        selected_label=-1,
+        predicted_label=-1,
         image_index=-1,
     ):
         # Add result to the results dataframe
@@ -60,7 +60,7 @@ class ResultMetrics:
                         [
                             image_index,
                             label,
-                            selected_label,
+                            predicted_label,
                             model,
                             dataset,
                             attribution_method,
