@@ -79,8 +79,6 @@ class Coherency(BaseMetric):
             mixed_attributions = mixed_attributions.squeeze(1)
             saliency_maps = saliency_maps.squeeze(1)
 
-        print(mixed_images.shape, mixed_attributions.shape, saliency_maps.shape)
-
         # Compute the correlation between mixed_attributions and saliency_maps
         pearson = (batch_pearson_coherency(mixed_attributions, saliency_maps) + 1) / 2
 
