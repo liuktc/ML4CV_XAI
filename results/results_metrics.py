@@ -54,17 +54,17 @@ class ResultMetrics:
         new_row = pd.DataFrame(
             [
                 {
-                    "image_index": image_index,
-                    "label": label,
-                    "predicted_label": predicted_label,
-                    "model": model,
-                    "dataset": dataset,
-                    "attribution_method": attribution_method,
-                    "layer": layer,
-                    "metric": metric,
-                    "upscale_method": upscale_method,
-                    "mixing_method": mixing_method,
-                    "value": value,
+                    "Image Index": image_index,
+                    "Label": label,
+                    "Predicted Label": predicted_label,
+                    "Model": model,
+                    "Dataset": dataset,
+                    "Attribution Method": attribution_method,
+                    "Layer": layer,
+                    "Metric": metric,
+                    "Upscale Method": upscale_method,
+                    "Mixing Method": mixing_method,
+                    "Value": value,
                 }
             ]
         )
