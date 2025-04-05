@@ -13,18 +13,18 @@ class InsertionCurveAUC(BaseMetric):
     def __call__(
         self,
         model: nn.Module,
-        images: torch.Tensor,
+        test_images: torch.Tensor,
         saliency_maps: torch.Tensor,
-        labels: torch.Tensor,
+        class_idx: torch.Tensor,
         attribution_method: AttributionMethod,
         device: torch.device | str = "cpu",
         apply_softmax: bool = True,
         return_mean: bool = True,
         **kwargs,
     ):
-        B, C, H, W = images.shape
+        B, C, H, W = test_images.shape
         ins_range, insertion = insertion_curve(
-            model, images, saliency_maps, labels, device, apply_softmax
+            model, test_images, saliency_maps, class_idx, device, apply_softmax
         )
         res = torch.zeros(B)
         for i in range(B):
