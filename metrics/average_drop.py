@@ -14,7 +14,7 @@ class AverageDrop(BaseMetric):
         model: nn.Module,
         test_images: torch.Tensor,
         saliency_maps: torch.Tensor,
-        labels: int | torch.Tensor,
+        class_idx: int | torch.Tensor,
         attribution_method: AttributionMethod,
         device: torch.device | str = "cpu",
         apply_softmax: bool = True,
@@ -62,13 +62,13 @@ class AverageDrop(BaseMetric):
             saliency_preds = nn.functional.softmax(saliency_preds, dim=1)
 
         # Select only the relevant class
-        if isinstance(labels, int):
-            test_preds = test_preds[:, labels]  # Shape: (N,)
-            saliency_preds = saliency_preds[:, labels]  # Shape: (N,)
-        elif isinstance(labels, torch.Tensor):
-            test_preds = test_preds[torch.arange(test_preds.size(0)), labels]
+        if isinstance(class_idx, int):
+            test_preds = test_preds[:, class_idx]  # Shape: (N,)
+            saliency_preds = saliency_preds[:, class_idx]  # Shape: (N,)
+        elif isinstance(class_idx, torch.Tensor):
+            test_preds = test_preds[torch.arange(test_preds.size(0)), class_idx]
             saliency_preds = saliency_preds[
-                torch.arange(saliency_preds.size(0)), labels
+                torch.arange(saliency_preds.size(0)), class_idx
             ]
         else:
             raise ValueError("class_idx should be either an int or a torch.Tensor")
