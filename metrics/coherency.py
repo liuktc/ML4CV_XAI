@@ -48,6 +48,8 @@ class Coherency(BaseMetric):
         attribution_method: AttributionMethod,
         return_mean: bool = True,
         layer: nn.Module = None,
+        upsample_method=None,
+        device: str = "cpu",
         **kwargs,
     ) -> torch.Tensor:
         # Coherency is defined as as the pearson correlation between the attribution on the image and the attribution on the image * saliency map
@@ -59,6 +61,23 @@ class Coherency(BaseMetric):
             layer=layer,
             target=class_idx,
         )
+
+        mixed_attributions = upsample_method(
+            attribution=mixed_attributions,
+            image=test_images,
+            device=device,
+            model=model,
+            layer=layer,
+        )
+
+        if mixed_attributions.shape != saliency_maps.shape:
+            raise ValueError(
+                f"Mixed attributions shape {mixed_attributions.shape} does not match saliency maps shape {saliency_maps.shape}."
+            )
+
+        if len(mixed_attributions.shape) == 4:
+            mixed_attributions = mixed_attributions.squeeze(1)
+            saliency_maps = saliency_maps.squeeze(1)
 
         print(mixed_images.shape, mixed_attributions.shape, saliency_maps.shape)
 
