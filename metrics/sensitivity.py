@@ -14,11 +14,11 @@ class Sensitivity(BaseMetric):
         self,
         model: nn.Module,
         test_images: torch.Tensor,
-        saliency_maps: torch.Tensor,
+        # saliency_maps: torch.Tensor,
         class_idx: int | torch.Tensor,
         attribution_method: AttributionMethod,
         device: torch.device | str = "cpu",
-        apply_softmax: bool = True,
+        # apply_softmax: bool = True,
         return_mean: bool = True,
         **kwargs,
     ) -> torch.Tensor:
