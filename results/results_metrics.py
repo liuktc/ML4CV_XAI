@@ -51,25 +51,19 @@ class ResultMetrics:
         predicted_label=-1,
         image_index=-1,
     ):
-        new_row = pd.DataFrame(
-            [
-                {
-                    "Image Index": image_index,
-                    "Label": label,
-                    "Predicted Label": predicted_label,
-                    "Model": model,
-                    "Dataset": dataset,
-                    "Attribution Method": attribution_method,
-                    "Layer": layer,
-                    "Metric": metric,
-                    "Upscale Method": upscale_method,
-                    "Mixing Method": mixing_method,
-                    "Value": value,
-                }
-            ]
-        )
-
-        self.results = pd.concat([self.results, new_row], ignore_index=True)
+        self.results.loc[len(self.results)] = {
+            "Image Index": image_index,
+            "Label": label,
+            "Predicted Label": predicted_label,
+            "Model": model,
+            "Dataset": dataset,
+            "Attribution Method": attribution_method,
+            "Layer": layer,
+            "Metric": metric,
+            "Upscale Method": upscale_method,
+            "Mixing Method": mixing_method,
+            "Value": value,
+        }
 
         self.save_results()
 
