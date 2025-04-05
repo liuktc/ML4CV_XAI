@@ -49,7 +49,7 @@ class Coherency(BaseMetric):
         device: torch.device | str = "cpu",
         apply_softmax: bool = True,
         return_mean: bool = True,
-        layer: torch.Module = None,
+        layer: nn.Module = None,
         **kwargs,
     ) -> torch.Tensor:
         # Coherency is defined as as the pearson correlation between the attribution on the image and the attribution on the image * saliency map
