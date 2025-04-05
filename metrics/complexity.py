@@ -20,7 +20,7 @@ class Complexity(BaseMetric):
             # by removing the channel dimension
             saliency_maps = saliency_maps.detach().clone().squeeze(1)
 
-        res = torch.linalg.norm(saliency_maps, ord=1)
+        res = torch.linalg.norm(saliency_maps, ord=1, dim=(-2, -1))
         if return_mean:
             res = res.mean()
         return res.item()
