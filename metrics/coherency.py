@@ -44,10 +44,8 @@ class Coherency(BaseMetric):
         model: nn.Module,
         test_images: torch.Tensor,
         saliency_maps: torch.Tensor,
-        labels: int | torch.Tensor,
+        class_idx: int | torch.Tensor,
         attribution_method: AttributionMethod,
-        device: torch.device | str = "cpu",
-        apply_softmax: bool = True,
         return_mean: bool = True,
         layer: nn.Module = None,
         **kwargs,
@@ -59,7 +57,7 @@ class Coherency(BaseMetric):
             input_tensor=mixed_images,
             model=model,
             layer=layer,
-            target=labels,
+            target=class_idx,
         )
 
         print(mixed_images.shape, mixed_attributions.shape, saliency_maps.shape)
