@@ -7,3 +7,5 @@ from .infidelity import Infidelity, perturb_fn
 from .sensitivity import Sensitivity
 from .road import RoadCombined
 from .roc_auc import ROC_AUC
+from .complexity import Complexity
+from .coherency import Coherency
