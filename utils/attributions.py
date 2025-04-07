@@ -9,7 +9,7 @@ from .util import (
     post_process_erf,
     calculate_erf_on_attribution,
 )
-from pytorch_grad_cam import GradCAMPlusPlus
+from pytorch_grad_cam import GradCAMPlusPlus, ScoreCAM
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from typing import List, Callable
 import numpy as np
@@ -166,10 +166,94 @@ class _DeepLiftShap(AttributionMethod):
         )
         attributions = attributions.sum(dim=1, keepdim=True)
 
+        # METTI ABS e poi normalizzi
         if normalize:
             attributions = min_max_normalize(attributions)
 
         return attributions
+
+
+class _ScoreCAM(AttributionMethod):
+    def __init__(
+        self,
+        name: str = "ScoreCAM",
+    ):
+        super().__init__(name=name)
+
+    def attribute(
+        self,
+        input_tensor: torch.Tensor,
+        model: nn.Module,
+        layer: str | nn.Module,
+        target: torch.Tensor,
+        normalize: bool = True,
+        **kwargs,
+    ):
+        with torch.enable_grad():
+            cam = ScoreCAMNoResize(model=model, target_layers=[layer])
+
+            targets = [ClassifierOutputTarget(t) for t in target]
+
+            # Compute ScoreCAM
+            grayscale_cam = cam(input_tensor=input_tensor, targets=targets)
+
+            # Convert to tensor efficiently and move to same device as input
+            grayscale_cam_tensor = torch.from_numpy(grayscale_cam).to(
+                input_tensor.device
+            )
+            grayscale_cam_tensor = grayscale_cam_tensor.unsqueeze(1)
+
+            if normalize:
+                grayscale_cam_tensor = min_max_normalize(grayscale_cam_tensor)
+
+            return grayscale_cam_tensor
+
+
+class ScoreCAMNoResize(ScoreCAM):
+    """Just the ScoreCAM but without the rescaling of the CAM attribution map."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def compute_cam_per_layer(
+        self,
+        input_tensor: torch.Tensor,
+        targets: List[torch.nn.Module],
+        eigen_smooth: bool,
+    ) -> np.ndarray:
+        activations_list = [
+            a.cpu().data.numpy() for a in self.activations_and_grads.activations
+        ]
+        grads_list = [
+            g.cpu().data.numpy() for g in self.activations_and_grads.gradients
+        ]
+        # target_size = self.get_target_width_height(input_tensor)
+
+        cam_per_target_layer = []
+        # Loop over the saliency image from every layer
+        for i in range(len(self.target_layers)):
+            target_layer = self.target_layers[i]
+            layer_activations = None
+            layer_grads = None
+            if i < len(activations_list):
+                layer_activations = activations_list[i]
+            if i < len(grads_list):
+                layer_grads = grads_list[i]
+
+            cam = self.get_cam_image(
+                input_tensor,
+                target_layer,
+                targets,
+                layer_activations,
+                layer_grads,
+                eigen_smooth,
+            )
+            cam = np.maximum(cam, 0)
+            # scaled = scale_cam_image(cam, target_size)
+            # cam_per_target_layer.append(scaled[:, None, :])
+            cam_per_target_layer.append(cam[:, None, :])
+
+        return cam_per_target_layer
 
 
 class _GradCAMPlusPlus(AttributionMethod):

@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import time
 
 
 class ResultMetrics:
@@ -8,7 +9,7 @@ class ResultMetrics:
     Model,Attribution Method,Layer,Metric,Upscale Method,Value
     """
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, save_each_time: float = 30.0):
         self.path = path
         self.HEADER = [
             "Image Index",
@@ -26,6 +27,8 @@ class ResultMetrics:
 
         self.results = pd.DataFrame(columns=self.HEADER)
         self.load_results()
+        self.save_each_time = save_each_time
+        self.last_save_time = 0
 
     def load_results(self):
         if os.path.exists(self.path):
@@ -68,7 +71,10 @@ class ResultMetrics:
         self.save_results()
 
     def save_results(self):
-        self.results.to_csv(self.path, index=False)
+        now = time.time()
+        if now - self.last_save_time > self.save_each_time:
+            self.last_save_time = now
+            self.results.to_csv(self.path, index=False)
 
     def get_last_image_index(self):
         if self.results.empty:
