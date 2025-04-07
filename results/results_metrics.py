@@ -26,9 +26,9 @@ class ResultMetrics:
         ]
 
         self.results = pd.DataFrame(columns=self.HEADER)
-        self.load_results()
         self.save_each_time = save_each_time
         self.last_save_time = 0
+        self.load_results()
 
     def load_results(self):
         if os.path.exists(self.path):

@@ -6,6 +6,8 @@ from .attributions import (
     ERFUpsampling,
     ERFUpsamplingFast,
     _ScoreCAM,
+    _EigenCAM,
+    _LayerCAM,
 )
 from .util import (
     cut_model_from_layer,
