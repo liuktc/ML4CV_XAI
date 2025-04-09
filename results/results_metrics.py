@@ -38,8 +38,6 @@ class ResultMetrics:
             print(f"Results file not found. Creating new results file {self.path}.")
             self.results = pd.DataFrame(columns=self.HEADER)
 
-        self.save_results()
-
     def add_result(
         self,
         model,

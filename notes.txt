@@ -1,0 +1,18 @@
+sistemar coherency cioè utilizzare la mappa filtrata
+
+provare altre CAM (le più citate, almeno 4 in tot)
+
+fare esperimenti anche con synthetic
+
+confronto con LRP (dovrebbe migliorare comunque)
+
+guardare layerCAM
+
+
+provare radice ennesima del prodotto
+
+
+metti abs su deepliftshap
+
+
+usare ADCC con Road invece di Average Drop

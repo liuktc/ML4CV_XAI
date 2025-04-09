@@ -71,3 +71,11 @@ class LogExpMix(Mixer):
         )
 
         return numerator / denominator
+
+
+class IdentityMix(Mixer):
+    def __init__(self, layers_to_combine="all"):
+        super().__init__("IdentityMix", layers_to_combine)
+
+    def __call__(self, attributions):
+        return attributions[-1]

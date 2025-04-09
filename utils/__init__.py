@@ -18,4 +18,4 @@ from .util import (
     min_max_normalize,
 )
 
-from .mix_attributions import MultiplierMix, LogExpMix, Mixer
+from .mix_attributions import MultiplierMix, LogExpMix, Mixer, IdentityMix

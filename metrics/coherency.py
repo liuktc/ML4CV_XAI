@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 from .utils import mix_image_and_saliency, BaseMetric
-from utils import AttributionMethod
+from utils import AttributionMethod, Mixer
+import matplotlib.pyplot as plt
 
 
 def batch_pearson_coherency(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
@@ -46,10 +47,12 @@ class Coherency(BaseMetric):
         saliency_maps: torch.Tensor,
         class_idx: int | torch.Tensor,
         attribution_method: AttributionMethod,
+        previous_attributions: list[torch.Tensor],
         return_mean: bool = True,
         layer: nn.Module = None,
         upsample_method=None,
         device: str = "cpu",
+        mixer: Mixer = None,
         **kwargs,
     ) -> torch.Tensor:
         # Coherency is defined as as the pearson correlation between the attribution on the image and the attribution on the image * saliency map
@@ -64,11 +67,20 @@ class Coherency(BaseMetric):
 
         mixed_attributions = upsample_method(
             attribution=mixed_attributions,
-            image=test_images,
+            image=mixed_images,
             device=device,
             model=model,
             layer=layer,
         )
+
+        # Filter using the previous attributions, but firts make a copy of the previous attributions
+        previous_attributions_copy = []
+
+        for i in range(len(previous_attributions)):
+            previous_attributions_copy.append(previous_attributions[i].detach().clone())
+
+        previous_attributions_copy.append(mixed_attributions)
+        mixed_attributions = mixer(previous_attributions_copy)
 
         if mixed_attributions.shape != saliency_maps.shape:
             raise ValueError(

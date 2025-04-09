@@ -1,1 +1,5 @@
 Image Index,Label,Predicted Label,Model,Dataset,Attribution Method,Layer,Metric,Upscale Method,Mixing Method,Value
+140,5,0,VGG11,Imagenettewoof,LayerCAM,features.20,coherency,bilinearUpsampling,IdentityMix,0.9571915864944458
+140,5,0,VGG11,Imagenettewoof,LayerCAM,features.20,coherency,bilinearUpsampling,IdentityMix,0.9571915864944458
+140,5,0,VGG11,Imagenettewoof,LayerCAM,features.20,coherency,bilinearUpsampling,IdentityMix,0.9571915864944458
+140,5,0,VGG11,Imagenettewoof,LayerCAM,features.20,coherency,bilinearUpsampling,IdentityMix,0.9571915864944458
