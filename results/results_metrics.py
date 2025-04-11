@@ -66,9 +66,12 @@ class ResultMetrics:
             "Value": value,
         }
 
-        self.save_results()
+        self.save_results(force_save=False)
 
-    def save_results(self):
+    def save_results(self, force_save=True):
+        if force_save:
+            self.results.to_csv(self.path, index=False)
+            return
         now = time.time()
         if now - self.last_save_time > self.save_each_time:
             self.last_save_time = now
