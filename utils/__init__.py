@@ -8,6 +8,7 @@ from .attributions import (
     _ScoreCAM,
     _EigenCAM,
     _LayerCAM,
+    _ShapleyCAM,
 )
 from .util import (
     cut_model_from_layer,
@@ -18,4 +19,10 @@ from .util import (
     min_max_normalize,
 )
 
-from .mix_attributions import MultiplierMix, LogExpMix, Mixer, IdentityMix
+from .mix_attributions import (
+    MultiplierMix,
+    LogExpMix,
+    Mixer,
+    IdentityMix,
+    NthRootMultiplierMix,
+)

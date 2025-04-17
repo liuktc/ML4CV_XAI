@@ -52,6 +52,29 @@ class MultiplierMix(Mixer):
         return result
 
 
+class NthRootMultiplierMix(Mixer):
+    def __init__(self, layers_to_combine: Literal["all", "top", "above"] = "all"):
+        """
+        MultiplierMix with the result raised to the power of 1/n, where n is the number of attributions.
+        """
+        super().__init__("NthRootMultiplierMix", layers_to_combine)
+
+    def __call__(self, attributions):
+        """
+        The attributions are assumed to be ordered from the most coarse to the most fine-grained.
+        """
+        if len(attributions) == 1:
+            return attributions[0]
+
+        attributions = self.filter_layers(attributions)
+
+        result = attributions[0]
+        for attr in attributions[1:]:
+            result *= attr
+
+        return torch.pow(result, 1 / len(attributions))
+
+
 class LogExpMix(Mixer):
     def __init__(self, layers_to_combine: Literal["all", "top", "above"] = "all"):
         Mixer.__init__(self, "LogExpMix", layers_to_combine)
