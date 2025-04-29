@@ -1,0 +1,15 @@
+model: vgg11
+dataset: imagenettewoof
+attribution_methods:
+  - GradCAMPlusPlus
+  - ShapleyCAM
+metrics:
+  # - ROC_AUC
+  - DeletionCurveAUC
+  - InsertionCurveAUC
+upscale_methods:
+  - SimpleUpsampling
+  - ERFUpsamplingFast
+
+model_path: ./VGG11_Imagenettewoof.pth
+output_path: ./results.csv

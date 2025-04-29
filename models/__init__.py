@@ -5,4 +5,6 @@ from .resnet import (
     resnet_preprocess,
     resnet18_Syntetic,
     resnet50_Syntetic,
+    resnet18_Imagenettewoof,
+    resnet50_Imagenettewoof,
 )

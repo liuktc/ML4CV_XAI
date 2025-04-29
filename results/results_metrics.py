@@ -2,6 +2,17 @@ import os
 import pandas as pd
 import time
 
+import logging  # Logging added
+
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("evaluation.log"), logging.StreamHandler()],
+)
+logger = logging.getLogger(__name__)
+logger.info("Starting program and setting up environment.")
+
 
 class ResultMetrics:
     """
@@ -71,11 +82,13 @@ class ResultMetrics:
     def save_results(self, force_save=True):
         if force_save:
             self.results.to_csv(self.path, index=False)
+            logger.info(f"Results saved to {self.path}.")
             return
         now = time.time()
         if now - self.last_save_time > self.save_each_time:
             self.last_save_time = now
             self.results.to_csv(self.path, index=False)
+            logger.info(f"Results saved to {self.path}.")
 
     def get_last_image_index(self):
         if self.results.empty:
