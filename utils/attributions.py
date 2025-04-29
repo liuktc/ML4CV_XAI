@@ -60,19 +60,28 @@ class ERFUpsampling(nn.Module):
 
     def __init__(
         self,
-        model,
-        layer: nn.Module,
-        device="cpu",
+        # model,
+        # layer: nn.Module,
         post_process_filter: Callable = post_process_erf,
     ):
         super().__init__()
         # self.model = model
-        self.device = device
-        self.model = cut_model_to_layer(model, layer, included=True)
         self.post_process_filter = post_process_filter
 
-    def forward(self, attribution: torch.Tensor, image):
-        erf = calculate_erf(self.model, image, device=self.device)
+    def forward(
+        self,
+        attribution: torch.Tensor,
+        image,
+        device,
+        model,
+        layer,
+        return_erf: bool = False,
+        **kwargs,
+    ):
+        self.model = cut_model_to_layer(model, layer, included=True)
+
+        erf = calculate_erf(self.model, image, device=device)
+        self.layer_number = int(get_layer_name(model, layer).split(".")[1])
 
         # Rescale the attribution map using the ERF values
         result = np.zeros(erf.shape[2:], dtype=np.float32)
@@ -92,9 +101,12 @@ class ERFUpsampling(nn.Module):
         result = min_max_normalize(result)
 
         if self.post_process_filter is not None:
-            result = self.post_process_filter(result)
+            result = self.post_process_filter(result, self.layer_number)
 
-        return torch.Tensor(result).to(self.device)
+        if return_erf:
+            return torch.Tensor(result).to(device), erf
+        else:
+            return torch.Tensor(result).to(device)
 
 
 def get_layer_name(model: nn.Module, layer: nn.Module):

@@ -11,3 +11,4 @@ data/image*/
 *.pkl
 
 runs/*
+output
