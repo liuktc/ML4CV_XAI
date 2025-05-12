@@ -69,7 +69,7 @@ def cut_model_from_layer(
 
 def cut_model_to_layer(
     model: nn.Module,
-    layer_name: str | nn.Module,
+    layer_name: nn.Module,
     included: bool = False,
 ) -> nn.Module:
     """

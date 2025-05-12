@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torchvision.transforms as transforms
 from torchvision.models import vgg11
+from torchvision.models.vgg import VGG11_Weights
 
 vgg_preprocess = transforms.Compose(
     [
@@ -14,18 +15,22 @@ vgg_preprocess = transforms.Compose(
 
 
 def vgg11_PascalVOC():
-    model = vgg11()
+    model = vgg11(weights=VGG11_Weights.IMAGENET1K_V1)
     model.classifier[-1] = nn.Linear(4096, 20)
     return model
 
 
 def vgg11_Syntetic():
-    model = vgg11()
+    model = vgg11(weights=VGG11_Weights.IMAGENET1K_V1)
     model.classifier[-1] = nn.Linear(4096, 6)
     return model
 
 
 def vgg11_Imagenettewoof():
-    model = vgg11()
+    model = vgg11(weights=VGG11_Weights.IMAGENET1K_V1)
     model.classifier[-1] = nn.Linear(4096, 20)
+    return model
+
+def vgg11_Imagenet():
+    model = vgg11(weights=VGG11_Weights.IMAGENET1K_V1)
     return model

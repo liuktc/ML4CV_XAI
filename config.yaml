@@ -1,15 +1,25 @@
-model: vgg11
-dataset: imagenettewoof
+model: resnet18
+# dataset: imagenettewoof
+dataset: synthetic
 attribution_methods:
   - GradCAMPlusPlus
-  - ShapleyCAM
+  - LayerCAM
+  - ScoreCAM
 metrics:
-  # - ROC_AUC
-  - DeletionCurveAUC
-  - InsertionCurveAUC
+  - road_combined
+  - deletioncurveauc
+  - insertioncurveauc
+  - infidelity
+  - averagedrop
+  - coherency
+  - complexity
+  - roc_auc
+  - mass_iou
 upscale_methods:
   - SimpleUpsampling
-  - ERFUpsamplingFast
+  # - ERFUpsamplingFast
 
-model_path: ./VGG11_Imagenettewoof.pth
-output_path: ./results.csv
+model_path: ./ResNet18_Syntetic.pth
+output_path: ./results_resnet18_synth.csv
+device: cuda:0
+num_samples: 1000

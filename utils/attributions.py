@@ -34,7 +34,7 @@ class AttributionMethod:
         self,
         input_tensor: torch.Tensor,
         model: nn.Module,
-        layer: str | nn.Module,
+        layer: nn.Module,
         target: torch.Tensor,
         baseline_dist: torch.Tensor = None,
     ):
@@ -154,7 +154,7 @@ class _DeepLiftShap(AttributionMethod):
         self,
         input_tensor: torch.Tensor,
         model: nn.Module,
-        layer: str | nn.Module,
+        layer: nn.Module,
         target: torch.Tensor,
         normalize: bool = True,
         **kwargs,
@@ -196,7 +196,7 @@ class _ScoreCAM(AttributionMethod):
         self,
         input_tensor: torch.Tensor,
         model: nn.Module,
-        layer: str | nn.Module,
+        layer: nn.Module,
         target: torch.Tensor,
         normalize: bool = True,
         **kwargs,
@@ -279,13 +279,13 @@ class _GradCAMPlusPlus(AttributionMethod):
         self,
         input_tensor: torch.Tensor,
         model: nn.Module,
-        layer: str | nn.Module,
+        layer: nn.Module,
         target: torch.Tensor,
         normalize: bool = True,
         **kwargs,
     ):
         with torch.enable_grad():
-            cam = GradCAMPlusPlusNoResize(model=model, target_layers=[layer])
+            cam = GradCAMPlusPlusNoResize(model=model, target_layers=[layer], **kwargs)
 
             targets = [ClassifierOutputTarget(t) for t in target]
 
@@ -409,7 +409,7 @@ class _EigenCAM(AttributionMethod):
         self,
         input_tensor: torch.Tensor,
         model: nn.Module,
-        layer: str | nn.Module,
+        layer: nn.Module,
         target: torch.Tensor,
         normalize: bool = True,
         **kwargs,
@@ -489,7 +489,7 @@ class _LayerCAM(AttributionMethod):
         self,
         input_tensor: torch.Tensor,
         model: nn.Module,
-        layer: str | nn.Module,
+        layer: nn.Module,
         target: torch.Tensor,
         normalize: bool = True,
         **kwargs,
@@ -574,7 +574,7 @@ class _ShapleyCAM(AttributionMethod):
         self,
         input_tensor: torch.Tensor,
         model: nn.Module,
-        layer: str | nn.Module,
+        layer: nn.Module,
         target: torch.Tensor,
         normalize: bool = True,
         **kwargs,

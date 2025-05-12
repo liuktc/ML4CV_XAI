@@ -22,6 +22,9 @@ def resnet18_Imagenettewoof():
     model.fc = nn.Linear(512, 20)
     return model
 
+def resnet18_Imagenet():
+    model = resnet18(ResNet18_Weights.DEFAULT)
+    return model
 
 def resnet50_PascalVOC():
     model = resnet50(ResNet50_Weights.DEFAULT)
@@ -38,4 +41,8 @@ def resnet50_Syntetic():
 def resnet50_Imagenettewoof():
     model = resnet50(ResNet50_Weights.DEFAULT)
     model.fc = nn.Linear(2048, 20)
+    return model
+
+def resnet50_Imagenet():
+    model = resnet50(ResNet50_Weights.DEFAULT)
     return model

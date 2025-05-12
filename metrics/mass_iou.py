@@ -14,8 +14,8 @@ class Mass_IOU(BaseMetric):
         mask: torch.Tensor,
         **kwargs,
     ) -> torch.Tensor:
-        mask = mask.detach().cpu().numpy()
-        attribution = saliency_maps.detach().cpu().numpy()
+        mask = mask.detach().clone()
+        attribution = saliency_maps.detach().clone()
 
         if mask.shape != attribution.shape:
             raise ValueError(
